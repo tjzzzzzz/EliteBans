@@ -32,7 +32,13 @@ public class BanListener implements Listener {
             }
         }
 
-        if (punishment != null && "TEMPBAN".equalsIgnoreCase(punishment.getType())) {
+        if (punishment != null && "BAN".equalsIgnoreCase(punishment.getType())) {
+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, ChatColor.RED + "You are permanently banned from this server.\n" +
+                    "Reason: " + ChatColor.WHITE + punishment.getReason());
+            return;
+        }
+
+        if (punishment != null && ("TEMPBAN".equalsIgnoreCase(punishment.getType()))) {
             if (punishment.getExpirationTime() > 0 && System.currentTimeMillis() > punishment.getExpirationTime()) {
                 databaseManager.archiveExpiredPunishment(punishment);
                 databaseManager.removePunishment(playerUUID);
@@ -42,7 +48,7 @@ public class BanListener implements Listener {
 
             String banMessage = ChatColor.RED + "You are temporarily banned from this server.\n" +
                     "Reason: " + ChatColor.WHITE + punishment.getReason() + "\n" +
-                    "Expires In: " + ChatColor.YELLOW + formatRemainingTime(punishment.getExpirationTime());
+                    "Expires In: " + ChatColor.WHITE + formatRemainingTime(punishment.getExpirationTime());
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, banMessage);
         }
     }

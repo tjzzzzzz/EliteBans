@@ -68,7 +68,9 @@ public class DatabaseManager {
                             rs.getLong("expiration_time"),
                             issuedByUUID
                     );
+
                     punishment.setTimestamp(rs.getLong("timestamp"));
+                    punishment.setDurationText(rs.getString("ban_duration")); // FIX: Retrieve and set the duration text
                     return punishment;
                 }
             } catch (SQLException e) {
@@ -81,16 +83,7 @@ public class DatabaseManager {
                 String issuedByString = document.getString("issued_by");
                 UUID issuedByUUID = "CONSOLE".equals(issuedByString) ? null : UUID.fromString(issuedByString);
 
-
-                Long expirationTime = document.getLong("expiration_time");
-                if (expirationTime == null) {
-                    expirationTime = -1L;
-                }
-
-                Long timestamp = document.getLong("timestamp");
-                if (timestamp == null) {
-                    timestamp = System.currentTimeMillis();
-                }
+                Long expirationTime = document.getLong("expiration_time") != null ? document.getLong("expiration_time") : -1L;
 
                 Punishment punishment = new Punishment(
                         document.getInteger("id", -1),
@@ -100,7 +93,9 @@ public class DatabaseManager {
                         expirationTime,
                         issuedByUUID
                 );
-                punishment.setTimestamp(timestamp);
+
+                punishment.setTimestamp(document.getLong("timestamp"));
+                punishment.setDurationText(document.getString("ban_duration")); // FIX: Retrieve and set the duration text
                 return punishment;
             }
         }
@@ -153,9 +148,13 @@ public class DatabaseManager {
         long currentTimestamp = System.currentTimeMillis();
         punishment.setTimestamp(currentTimestamp);
 
+        // Safeguard ban_duration (ensure it is never null)
+        String durationText = punishment.getDurationText() != null ? punishment.getDurationText() : "N/A";
+        punishment.setDurationText(durationText);
+
         if (databaseType == DatabaseType.MYSQL) {
-            String query = "INSERT INTO punishments (player_uuid, player_name, reason, type, expiration_time, issued_by, issued_by_name, name_based, timestamp) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO punishments (player_uuid, player_name, reason, type, expiration_time, issued_by, issued_by_name, name_based, timestamp, ban_duration) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement statement = mysqlConnection.prepareStatement(query)) {
                 statement.setString(1, punishment.getPlayerId().toString());
                 statement.setString(2, playerName);
@@ -165,7 +164,8 @@ public class DatabaseManager {
                 statement.setString(6, punishment.getIssuedBy() != null ? punishment.getIssuedBy().toString() : "CONSOLE");
                 statement.setString(7, issuedByName);
                 statement.setBoolean(8, nameBased);
-                statement.setLong(9, currentTimestamp);
+                statement.setLong(9, punishment.getTimestamp());
+                statement.setString(10, durationText); // Save the defaulted ban_duration here
                 statement.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -180,7 +180,8 @@ public class DatabaseManager {
                     .append("issued_by", punishment.getIssuedBy() != null ? punishment.getIssuedBy().toString() : "CONSOLE")
                     .append("issued_by_name", issuedByName)
                     .append("name_based", nameBased)
-                    .append("timestamp", currentTimestamp);
+                    .append("timestamp", punishment.getTimestamp())
+                    .append("ban_duration", durationText); // Save the defaulted ban_duration here
             collection.insertOne(document);
         }
     }
@@ -338,9 +339,12 @@ public class DatabaseManager {
                                   String unbannedByName, String unbanReason, String archiveType) {
         long now = System.currentTimeMillis();
 
+
+        String banDuration = punishment.getDurationText() != null ? punishment.getDurationText() : "N/A";
+
         if (databaseType == DatabaseType.MYSQL) {
             String query = "INSERT INTO punishment_history (uuid, type, reason, issued_by_uuid, issued_by_name, issued_at, " +
-                    "unbanned_at, unbanned_by_uuid, unbanned_by_name, unban_reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    "unbanned_at, unbanned_by_uuid, unbanned_by_name, unban_reason, ban_duration) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement statement = mysqlConnection.prepareStatement(query)) {
                 statement.setString(1, punishment.getPlayerId().toString());
                 statement.setString(2, archiveType);
@@ -352,6 +356,7 @@ public class DatabaseManager {
                 statement.setString(8, unbannedByUUID != null ? unbannedByUUID.toString() : null);
                 statement.setString(9, unbannedByName);
                 statement.setString(10, unbanReason);
+                statement.setString(11, banDuration);
                 statement.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -368,7 +373,8 @@ public class DatabaseManager {
                     .append("unbanned_at", now)
                     .append("unbanned_by_uuid", unbannedByUUID != null ? unbannedByUUID.toString() : null)
                     .append("unbanned_by_name", unbannedByName)
-                    .append("unban_reason", unbanReason);
+                    .append("unban_reason", unbanReason)
+                    .append("ban_duration", banDuration);
             collection.insertOne(newHistoryEntry);
         }
     }
@@ -393,7 +399,13 @@ public class DatabaseManager {
                             Optional.ofNullable(rs.getObject("expiration_time", Long.class)).orElse(-1L),
                             issuedByUUID
                     );
+
                     punishment.setTimestamp(rs.getLong("issued_at"));
+                    String banDuration = rs.getString("ban_duration");
+                    if (banDuration == null || banDuration.trim().isEmpty()) {
+                        banDuration = "N/A";
+                    }
+                    punishment.setDurationText(banDuration);
                     if (rs.getString("unbanned_by_name") != null) {
                         punishment.setUnbanDetails(
                                 rs.getString("unbanned_by_name"),
@@ -434,6 +446,11 @@ public class DatabaseManager {
                             issuedByUUID
                     );
                     punishment.setTimestamp(issuedAt);
+                    String banDuration = document.getString("ban_duration");
+                    if (banDuration == null || banDuration.trim().isEmpty()) {
+                        banDuration = "N/A";
+                    }
+                    punishment.setDurationText(banDuration);
                     if (document.getString("unbanned_by_name") != null) {
                         punishment.setUnbanDetails(
                                 document.getString("unbanned_by_name"),
@@ -503,9 +520,11 @@ public class DatabaseManager {
     }
 
     public void archiveExpiredPunishment(Punishment punishment) {
+        String banDuration = punishment.getDurationText() != null ? punishment.getDurationText() : "N/A"; // Safeguard ban duration
+
         if (databaseType == DatabaseType.MYSQL) {
-            String query = "INSERT INTO punishment_history (uuid, type, reason, issued_by_uuid, issued_by_name, issued_at, expired_at) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO punishment_history (uuid, type, reason, issued_by_uuid, issued_by_name, issued_at, expired_at, ban_duration) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement statement = mysqlConnection.prepareStatement(query)) {
                 statement.setString(1, punishment.getPlayerId().toString());
                 statement.setString(2, "tban");
@@ -514,6 +533,7 @@ public class DatabaseManager {
                 statement.setString(5, punishment.getIssuedByName());
                 statement.setLong(6, punishment.getTimestamp());
                 statement.setLong(7, System.currentTimeMillis());
+                statement.setString(8, banDuration); // Set the ban duration here
                 statement.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -527,7 +547,8 @@ public class DatabaseManager {
                     .append("issued_by_uuid", punishment.getIssuedBy() != null ? punishment.getIssuedBy().toString() : null)
                     .append("issued_by_name", punishment.getIssuedByName())
                     .append("issued_at", punishment.getTimestamp())
-                    .append("expired_at", System.currentTimeMillis());
+                    .append("expired_at", System.currentTimeMillis())
+                    .append("ban_duration", banDuration); // Include the duration when archiving
             collection.insertOne(historyEntry);
         }
     }
@@ -553,6 +574,10 @@ public class DatabaseManager {
                             issuedByUUID
                     );
                     punishment.setTimestamp(rs.getLong("timestamp"));
+
+                    String banDuration = rs.getString("ban_duration");
+                    punishment.setDurationText((banDuration == null || banDuration.trim().isEmpty()) ? "N/A" : banDuration);
+
                     activePunishments.add(punishment);
                 }
             } catch (SQLException e) {
@@ -575,6 +600,10 @@ public class DatabaseManager {
                             issuedByUUID
                     );
                     punishment.setTimestamp(document.getLong("timestamp"));
+
+                    String banDuration = document.getString("ban_duration");
+                    punishment.setDurationText((banDuration == null || banDuration.trim().isEmpty()) ? "N/A" : banDuration);
+
                     activePunishments.add(punishment);
                 }
             }
@@ -582,4 +611,6 @@ public class DatabaseManager {
 
         return activePunishments;
     }
+
+
 }

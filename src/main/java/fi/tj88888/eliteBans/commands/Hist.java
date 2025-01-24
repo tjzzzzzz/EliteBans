@@ -35,68 +35,72 @@ public class Hist implements CommandExecutor {
             return true;
         }
 
-        // Fetch active punishments
         List<Punishment> activePunishments = databaseManager.getActivePunishments(targetUUID);
 
-        // Fetch past punishments
         List<Punishment> historicalPunishments = databaseManager.getPunishmentHistory(targetUUID);
 
-        // Display results
-        sender.sendMessage(ChatColor.AQUA + "Punishment History for " + ChatColor.YELLOW + targetName + ChatColor.AQUA + ":");
+        sender.sendMessage(ChatColor.WHITE + "Punishment History for " + ChatColor.LIGHT_PURPLE + targetName + ChatColor.WHITE + ":");
 
-        // Display active punishments
+        // Active Punishments
         if (!activePunishments.isEmpty()) {
-            sender.sendMessage(ChatColor.GOLD + "Active Punishments:");
+            sender.sendMessage(ChatColor.RED + "Active Punishments:");
             for (Punishment punishment : activePunishments) {
                 String expiresIn = (punishment.getExpirationTime() > 0)
                         ? formatDuration(punishment.getExpirationTime())
                         : "Permanent";
 
-                String status = punishment.getExpirationTime() > 0 && punishment.getExpirationTime() <= System.currentTimeMillis()
-                        ? ChatColor.RED + "Expired"
-                        : ChatColor.GREEN + "Active";
+                sender.sendMessage(ChatColor.LIGHT_PURPLE + "Type: " + ChatColor.WHITE + punishment.getType());
+                sender.sendMessage(ChatColor.LIGHT_PURPLE + "Reason: " + ChatColor.WHITE + punishment.getReason());
+                sender.sendMessage(ChatColor.LIGHT_PURPLE + "Issued By: " + ChatColor.WHITE + punishment.getIssuedByName());
 
-                sender.sendMessage(ChatColor.DARK_AQUA + "Type: " + ChatColor.GOLD + punishment.getType());
-                sender.sendMessage(ChatColor.DARK_AQUA + "Reason: " + ChatColor.GOLD + punishment.getReason());
-                sender.sendMessage(ChatColor.DARK_AQUA + "Issued By: " + ChatColor.GOLD + punishment.getIssuedByName());
-                sender.sendMessage(ChatColor.DARK_AQUA + "Expires In: " + ChatColor.YELLOW + expiresIn);
-                sender.sendMessage(ChatColor.DARK_AQUA + "Status: " + status);
+                // Safeguard duration
+                String duration = punishment.getDurationText() != null ? punishment.getDurationText() : "N/A";
+                sender.sendMessage(ChatColor.LIGHT_PURPLE + "Duration: " + ChatColor.WHITE + duration);
+
+                sender.sendMessage(ChatColor.LIGHT_PURPLE + "Expires In: " + ChatColor.WHITE + expiresIn);
                 sender.sendMessage(ChatColor.GRAY + "-----------------------------------");
             }
         } else {
-            sender.sendMessage(ChatColor.YELLOW + "No active punishments.");
+            sender.sendMessage(ChatColor.GREEN + "No active punishments.");
         }
 
-        // Display past punishments
+        // Historical Punishments
+        // Historical Punishments
+        // Historical Punishments
         if (!historicalPunishments.isEmpty()) {
-            sender.sendMessage(ChatColor.GOLD + "Past Punishments:");
-            for (Punishment punishment : historicalPunishments) {
-                String issuedDate = formatDate(punishment.getTimestamp());
-                String unbanDate = punishment.getUnbanTimestamp() > 0 ? formatDate(punishment.getUnbanTimestamp()) : "N/A";
+            sender.sendMessage(ChatColor.RED + "Punishment History:");
 
-                sender.sendMessage(ChatColor.DARK_AQUA + "Type: " + ChatColor.GOLD + punishment.getType());
-                sender.sendMessage(ChatColor.DARK_AQUA + "Reason: " + ChatColor.GOLD + punishment.getReason());
-                sender.sendMessage(ChatColor.DARK_AQUA + "Issued By: " + ChatColor.GOLD + punishment.getIssuedByName());
-                sender.sendMessage(ChatColor.DARK_AQUA + "Issued Date: " + ChatColor.GOLD + issuedDate);
+            // Sort punishments by timestamp (most recent first)
+            historicalPunishments.sort((p1, p2) -> Long.compare(p2.getTimestamp(), p1.getTimestamp()));
+
+            for (Punishment punishment : historicalPunishments) {
+                sender.sendMessage(ChatColor.LIGHT_PURPLE + "Type: " + ChatColor.WHITE + punishment.getType());
+                sender.sendMessage(ChatColor.LIGHT_PURPLE + "Reason: " + ChatColor.WHITE + punishment.getReason());
+                sender.sendMessage(ChatColor.LIGHT_PURPLE + "Issued By: " + ChatColor.WHITE + punishment.getIssuedByName());
+
+                // Safeguard duration text
+                String durationText = punishment.getDurationText() != null ? punishment.getDurationText() : "N/A";
+                sender.sendMessage(ChatColor.LIGHT_PURPLE + "Duration: " + ChatColor.WHITE + durationText);
+
+                sender.sendMessage(ChatColor.LIGHT_PURPLE + "Issued At: " + ChatColor.WHITE + formatDate(punishment.getTimestamp()));
 
                 if (punishment.getUnbannedByName() != null) {
-                    sender.sendMessage(ChatColor.DARK_GREEN + "Unban Date: " + ChatColor.GOLD + unbanDate);
-                    sender.sendMessage(ChatColor.DARK_GREEN + "Unbanned By: " + ChatColor.GOLD + punishment.getUnbannedByName());
-                    sender.sendMessage(ChatColor.DARK_GREEN + "Unban Reason: " + ChatColor.GOLD + punishment.getUnbanReason());
+                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Unbanned By: " + ChatColor.WHITE + punishment.getUnbannedByName());
+                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Unban Reason: " + ChatColor.WHITE + punishment.getUnbanReason());
+                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Unbanned At: " + ChatColor.WHITE + formatDate(punishment.getUnbanTimestamp()));
                 } else {
-                    sender.sendMessage(ChatColor.RED + "Unban Status: Expired");
+                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Unban Reason:" + ChatColor.WHITE + " Expired");
                 }
 
                 sender.sendMessage(ChatColor.GRAY + "-----------------------------------");
             }
         } else {
-            sender.sendMessage(ChatColor.YELLOW + "No past punishments found.");
+            sender.sendMessage(ChatColor.LIGHT_PURPLE + "No past punishments found.");
         }
 
         return true;
     }
 
-    // Method to get the player UUID
     private UUID getPlayerUUID(String playerName) {
         if (Bukkit.getPlayerExact(playerName) != null) {
             return Bukkit.getPlayerExact(playerName).getUniqueId();
@@ -107,17 +111,14 @@ public class Hist implements CommandExecutor {
             return offlinePlayer.getUniqueId();
         }
 
-        // Player has never joined
         return null;
     }
 
-    // Method to format timestamps into readable dates
     private String formatDate(long timestamp) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return dateFormat.format(timestamp);
     }
 
-    // Method to format ban durations
     private String formatDuration(long expirationTime) {
         if (expirationTime <= 0) {
             return "Permanent";

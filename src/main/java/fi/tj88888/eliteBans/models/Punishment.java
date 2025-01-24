@@ -17,6 +17,7 @@ public class Punishment {
     private String unbannedByName;
     private String unbanReason;
     private long unbanTimestamp;
+    private String durationText;
 
     /**
      * Full constructor. ID can be null for new punishments.
@@ -108,4 +109,16 @@ public class Punishment {
 
         return "Unknown";
     }
+
+    public String getDurationText() {
+        // Default to "N/A" if null
+        return durationText != null ? durationText : "N/A";
+    }
+
+
+    public void setDurationText(String durationText) {
+        // Set a default value if null
+        this.durationText = (durationText == null || durationText.trim().isEmpty()) ? "N/A" : durationText;
+    }
+
 }

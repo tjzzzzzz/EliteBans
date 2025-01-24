@@ -1,0 +1,57 @@
+name: EliteBans
+version: '1.0'
+main: fi.tj88888.eliteBans.EliteBans
+api-version: '1.21'
+prefix: elitebans
+load: STARTUP
+authors: [ tj88888 ]
+website: https://tj88888.fi/
+commands:
+  ban:
+    description: Ban a player permanently.
+    usage: /<command> <player> [reason]
+    permission: elitebans.command.ban
+  unban:
+    description: Unban a player.
+    usage: /<command> <player>
+    permission: elitebans.command.unban
+  mute:
+    description: Mute a player.
+    usage: /<command> <player> [reason]
+    permission: elitebans.command.mute
+  unmute:
+    description: Unmute a player.
+    usage: /<command> <player>
+    permission: elitebans.command.unmute
+  tban:
+    description: Temporarily ban a player.
+    usage: /<command> <player> <duration> [reason]
+    permission: elitebans.command.tban
+  tmute:
+    description: Temporarily mute a player.
+    usage: /<command> <player> <duration> [reason]
+    permission: elitebans.command.tmute
+  hist:
+    description: View a player's punishment history.
+    usage: /<command> <player>
+    aliases: [history]
+
+permissions:
+  elitebans.command.ban:
+    description: Allows a user to permanently ban players.
+    default: op
+  elitebans.command.unban:
+    description: Allows a user to unban players.
+    default: op
+  elitebans.command.mute:
+    description: Allows a user to mute players.
+    default: op
+  elitebans.command.unmute:
+    description: Allows a user to unmute players.
+    default: op
+  elitebans.command.tban:
+    description: Allows a user to temporarily ban players.
+    default: op
+  elitebans.command.tmute:
+    description: Allows a user to temporarily mute players.
+    default: op

@@ -45,12 +45,15 @@ public class TempBan implements CommandExecutor {
         }
         String reason = reasonBuilder.toString().trim();
 
+        // Parse the duration from the input
         long duration = parseDuration(timeInput);
         if (duration <= 0) {
             sender.sendMessage(ChatColor.RED + "Invalid duration format! Use formats like 30m, 2h, 1d.");
             return true;
         }
+
         long expirationTimestamp = System.currentTimeMillis() + duration;
+        String durationText = formatBanDuration(duration); // FIX: Generate human-readable duration
 
         UUID targetUUID = getPlayerUUID(targetName);
         if (targetUUID == null) {
@@ -75,26 +78,36 @@ public class TempBan implements CommandExecutor {
                 && !Bukkit.getOfflinePlayer(targetName).hasPlayedBefore();
 
         Punishment punishment = new Punishment(
-                targetUUID,  // Banned player's UUID
-                reason,      // Ban reason
-                "TEMPBAN",   // Temporary ban type
-                expirationTimestamp, // Expiration timestamp (temporary ban)
-                bannerUUID   // UUID of who banned the player (null if console, handled later)
+                targetUUID,
+                reason,
+                "TEMPBAN",
+                expirationTimestamp,
+                bannerUUID
         );
-        long timestamp = System.currentTimeMillis();
-        punishment.setTimestamp(timestamp);
+        punishment.setTimestamp(System.currentTimeMillis());
+        punishment.setDurationText(durationText); // FIX: Set readable duration
+
         databaseManager.addPunishment(punishment, targetName, bannerDisplayName, nameBasedBan);
 
-        Bukkit.broadcastMessage(ChatColor.RED + targetDisplayName + " has been temporarily banned by " + bannerDisplayName +
-                " for " + timeInput + ": " + ChatColor.WHITE + reason);
+        sender.sendMessage(ChatColor.GREEN + targetDisplayName + " banned for " + durationText + ": " + reason);
 
         Player targetPlayer = Bukkit.getPlayerExact(targetName);
         if (targetPlayer != null) {
-            targetPlayer.kickPlayer(ChatColor.RED + "You have been temporarily banned from this server!\n" +
-                    "Reason: " + reason + "\nDuration: " + timeInput);
+            targetPlayer.kickPlayer(ChatColor.RED + "You have been temporarily banned!\n"
+                    + "Reason: " + reason + "\nDuration: " + durationText);
         }
 
         return true;
+    }
+
+    private String formatBanDuration(long durationMillis) {
+        long days = durationMillis / (1000L * 60 * 60 * 24);
+        long hours = (durationMillis / (1000L * 60 * 60)) % 24;
+        long minutes = (durationMillis / (1000L * 60)) % 60;
+
+        return (days > 0 ? days + "d " : "") +
+                (hours > 0 ? hours + "h " : "") +
+                (minutes > 0 ? minutes + "m" : "").trim();
     }
 
     private long parseDuration(String input) {
@@ -112,7 +125,6 @@ public class TempBan implements CommandExecutor {
             return -1;
         }
     }
-
     private UUID getPlayerUUID(String targetName) {
         Player onlinePlayer = Bukkit.getPlayerExact(targetName);
         if (onlinePlayer != null) {
