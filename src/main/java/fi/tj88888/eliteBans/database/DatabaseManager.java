@@ -1,6 +1,7 @@
 package fi.tj88888.eliteBans.database;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 import fi.tj88888.eliteBans.models.Punishment;
 import org.bson.Document;
 import java.sql.*;
@@ -525,6 +526,32 @@ public class DatabaseManager {
             }
         }
         return activePunishments;
+    }
+
+    public int pruneLatestPunishments(UUID playerUUID, int amount) {
+        int removedCount = 0;
+        if (databaseType == DatabaseType.MYSQL) {
+            String query = "DELETE FROM punishment_history WHERE uuid = ? ORDER BY issued_at DESC LIMIT ?";
+            try (PreparedStatement statement = mysqlConnection.prepareStatement(query)) {
+                statement.setString(1, playerUUID.toString());
+                statement.setInt(2, amount);
+                removedCount = statement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else if (databaseType == DatabaseType.MONGODB) {
+            MongoCollection<Document> collection = mongoDatabase.getCollection("punishment_history");
+            removedCount = (int) collection.find(eq("uuid", playerUUID.toString()))
+                    .sort(Sorts.descending("issued_at"))
+                    .limit(amount)
+                    .map(doc -> {
+                        collection.deleteOne(doc);
+                        return 1;
+                    })
+                    .into(new ArrayList<>())
+                    .size();
+        }
+        return removedCount;
     }
 
 }

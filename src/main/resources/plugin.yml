@@ -35,7 +35,13 @@ commands:
     description: View a player's punishment history.
     usage: /<command> <player>
     aliases: [history]
-
+  warn:
+   description: Warn a player.
+   usage: /<command> <player> <reason>
+   permission: elitebans.command.warn
+  prunehistory:
+    description: Removes punishments from a players history.
+    usage: /<command> <player> <amount>
 permissions:
   elitebans.command.ban:
     description: Allows a user to permanently ban players.
@@ -54,4 +60,10 @@ permissions:
     default: op
   elitebans.command.tmute:
     description: Allows a user to temporarily mute players.
+    default: op
+  elitebans.command.warn:
+    description: Allows a user to warn players.
+    default: op
+  elitebans.command.prunehistory:
+    description: Allows a user to prune players histories.
     default: op

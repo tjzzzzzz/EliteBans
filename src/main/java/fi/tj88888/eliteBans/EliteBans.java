@@ -39,6 +39,8 @@ public final class EliteBans extends JavaPlugin {
         this.getCommand("mute").setExecutor(new Mute(databaseManager));
         this.getCommand("unmute").setExecutor(new Unmute(databaseManager));
         this.getCommand("tmute").setExecutor(new TempMute(databaseManager));
+        this.getCommand("warn").setExecutor(new Warn(databaseManager));
+        this.getCommand("prunehistory").setExecutor(new PruneHistory(databaseManager));
         getServer().getPluginManager().registerEvents(new BanListener(databaseManager), this);
         getServer().getPluginManager().registerEvents(new ChatListener(databaseManager), this);
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
