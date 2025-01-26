@@ -68,7 +68,7 @@ public final class EliteBans extends JavaPlugin {
         this.getCommand("unmute").setExecutor(new Unmute(databaseManager));
         this.getCommand("tmute").setExecutor(new TempMute(databaseManager));
         this.getCommand("warn").setExecutor(new Warn(databaseManager));
-        this.getCommand("prunehistory").setExecutor(new PruneHistory(databaseManager));
+        this.getCommand("prunehistory").setExecutor(new PruneHistory(databaseManager, getLogger()));
         this.getCommand("histgui").setExecutor(new HistGUI(databaseManager));
     }
 
