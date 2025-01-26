@@ -7,3 +7,61 @@ database:
 
 # True/False. Debug logs important information about a lot of things in console. (Not needed if everything works)
 debug: true
+
+# Color/Style codes for messages.
+# &4 - Dark-Red
+#&c - Red
+#&6 - Gold
+#&e - Yellow
+#&2 - Dark-Green
+# &a - Light-Green
+#&b - Aqua
+#&3 - Darker Shade Of Aqua
+#&1 - Dark-Blue
+# &9 - Light-Blue
+#&d - Light-Purple
+#&5 - Dark-Purple
+#&f - White
+#&7 - Gray
+#&8 - Dark-Gray
+#&0 - Black
+#&l - Bold
+#&n - Underline
+#&o - Itallic
+#&k - Magic
+#&m - Strike
+#r - Reset
+# NOTE DO NOT UNCOMMENT THESE!
+messages:
+  no-permission: "&cYou don't have permission to use this command" # This barely print out, as it will say unknown command if the player doesn't have perms.
+  ban-usage: "&fUsage: /&dban &f<&dplayer&f> <&dreason&f>"
+  player-not-found: "&fPlayer &d%player%&f does not exist!"
+  player-banned: "&7(Silent) &d%player%&f has been banned by &d%banner%&f for &d%reason%"
+  player-muted: "&a%player% has been muted: %reason%"
+  player-temp-banned: "&a%player% banned for %duration%: %reason%"
+  player-temp-muted: "&a%player% muted for %duration%: %reason%"
+  player-warned: "&a%player% has been warned: %reason%"
+  ban-notification: "&dYou have been permanently banned!\nReason: &f%reason%&d\nAppeal At:&fdiscord.gg/example"
+  mute-notification: "&cYou have been muted!\nReason: &f%reason%"
+  temp-ban-notification: "&cYou have been temporarily banned!\nReason: &f%reason%\nDuration: &f%duration%"
+  temp-mute-notification: "&cYou have been temporarily muted!\nReason: &f%reason%\nDuration: &f%duration%"
+  hist:
+    usage: "&cUsage: /hist <player>"
+    player-not-found: "&cPlayer %player% does not exist or has no history."
+    header: "&fPunishment History for &d%player%&f:"
+    divider: "&7-----------------------------------"
+    active-punishments: "&cActive Punishments:"
+    punishment-history: "&ePunishment History:"
+    punishment-type: "&dType: &f%type%"
+    punishment-reason: "&dReason: &f%reason%"
+    punishment-issued-by: "&dIssued By: &f%issuer%"
+    punishment-issued-at: "&dIssued At: &f%time%"
+    punishment-duration: "&dDuration: &f%duration%"
+    punishment-expires: "&dExpires In: &f%expires%"
+    punishment-unbanned-by: "&dUnbanned By: &f%unbanner%"
+    punishment-unban-reason: "&dUnban Reason: &f%reason%"
+    punishment-unbanned-at: "&dUnbanned At: &f%time%"
+    punishment-unmuted-by: "&dUnmuted By: &f%unmuter%"
+    punishment-unmute-reason: "&dUnmute Reason: &f%reason%"
+    punishment-unmuted-at: "&dUnmuted At: &f%time%"
+    punishment-status: "&dPunishment Status: &f%status%"

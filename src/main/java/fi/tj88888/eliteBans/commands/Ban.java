@@ -1,6 +1,7 @@
 package fi.tj88888.eliteBans.commands;
 import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.models.Punishment;
+import fi.tj88888.eliteBans.utils.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -20,19 +21,20 @@ public class Ban implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (!player.hasPermission("elitebans.command.ban")) {
-                player.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
+                player.sendMessage(MessageUtil.getColoredMessage("messages.no-permission", "&cYou don't have permission to use this command!"));
                 return true;
             }
         }
         if (args.length < 2) {
-            sender.sendMessage(ChatColor.RED + "Usage: /ban <player> <reason>");
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.ban-usage", "&fUsage: /&dban &f<&dplayer&f> <&dreason&f>"));
             return true;
         }
         String targetName = args[0];
         String reason = buildReason(args, 1);
         UUID targetUUID = getPlayerUUID(targetName);
         if (targetUUID == null) {
-            sender.sendMessage(ChatColor.RED + "Player " + targetName + " does not exist!");
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.player-not-found", "&fPlayer &d%player%&f does not exist!")
+                    .replace("%player%", targetName));
             return true;
         }
         UUID issuerUUID = sender instanceof Player ? ((Player) sender).getUniqueId() : null;
@@ -42,8 +44,17 @@ public class Ban implements CommandExecutor {
         Punishment punishment = new Punishment(targetUUID, reason, "ban", -1, issuerUUID);
         punishment.setTimestamp(System.currentTimeMillis());
         databaseManager.addPunishment(punishment, targetName, issuerName, isNameBasedBan);
-        broadcastBan(targetDisplayName, issuerName, reason);
         kickPlayer(targetName, reason);
+        String banMessage = (MessageUtil.getColoredMessage("messages.player-banned",
+                "&d%player%&f has been banned by &d%banner%&f: &d%reason%",
+                "%player%", targetName,
+                "%banner%", issuerName,
+                "%reason%", reason));
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.hasPermission("elitebans.command.base")) {
+                player.sendMessage(banMessage);
+            }
+        }
         return true;
     }
 }

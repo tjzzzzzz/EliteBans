@@ -46,7 +46,8 @@ public class PlayerUtils {
     public static void kickPlayer(String playerName, String reason) {
         Player player = Bukkit.getPlayerExact(playerName);
         if (player != null) {
-            player.kickPlayer(ChatColor.RED + "You have been banned from this server!\nReason: " + ChatColor.WHITE + reason);
+            player.kickPlayer(MessageUtil.getColoredMessage("messages.ban-notification", "&dYou have been permanently banned!\\nReason: &f%reason%&d\\nAppeal At:&fdiscord.gg/example",
+                    "%reason%", reason));
         }
     }
 

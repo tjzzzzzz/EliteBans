@@ -6,6 +6,7 @@ import fi.tj88888.eliteBans.listeners.ChatListener;
 import fi.tj88888.eliteBans.listeners.HistoryGUIListener;
 import fi.tj88888.eliteBans.models.Punishment;
 import fi.tj88888.eliteBans.utils.LogUtil;
+import fi.tj88888.eliteBans.utils.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.List;
@@ -19,6 +20,7 @@ public final class EliteBans extends JavaPlugin {
     public void onEnable() {
         try {
             LogUtil.init(this);
+            MessageUtil.init(this);
             this.saveDefaultConfig();
             this.debug = this.getConfig().getBoolean("debug", false);
             LogUtil.debug("Loading configuration...");
