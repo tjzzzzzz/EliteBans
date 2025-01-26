@@ -3,6 +3,7 @@ import fi.tj88888.eliteBans.commands.*;
 import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.listeners.BanListener;
 import fi.tj88888.eliteBans.listeners.ChatListener;
+import fi.tj88888.eliteBans.listeners.HistoryGUIListener;
 import fi.tj88888.eliteBans.models.Punishment;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -41,8 +42,10 @@ public final class EliteBans extends JavaPlugin {
         this.getCommand("tmute").setExecutor(new TempMute(databaseManager));
         this.getCommand("warn").setExecutor(new Warn(databaseManager));
         this.getCommand("prunehistory").setExecutor(new PruneHistory(databaseManager));
+        this.getCommand("histgui").setExecutor(new HistGUI(databaseManager));
         getServer().getPluginManager().registerEvents(new BanListener(databaseManager), this);
         getServer().getPluginManager().registerEvents(new ChatListener(databaseManager), this);
+        getServer().getPluginManager().registerEvents(new HistoryGUIListener(databaseManager), this);
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
             List<Punishment> expiredPunishments = databaseManager.removeExpiredPunishments();
             for (Punishment punishment : expiredPunishments) {

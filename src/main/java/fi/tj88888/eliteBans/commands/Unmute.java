@@ -42,8 +42,8 @@ public class Unmute implements CommandExecutor {
         List<Punishment> activePunishments = databaseManager.getActivePunishments(targetUUID);
         boolean foundMute = false;
         for (Punishment punishment : activePunishments) {
-            if ("MUTE".equalsIgnoreCase(punishment.getType()) || "TEMPMUTE".equalsIgnoreCase(punishment.getType())) {
-                String punishmentType = punishment.getType().equalsIgnoreCase("TEMPMUTE") ? "tmute" : "mute";
+            if ("MUTE".equalsIgnoreCase(punishment.getType()) || "TMUTE".equalsIgnoreCase(punishment.getType())) {
+                String punishmentType = punishment.getType().equalsIgnoreCase("TMUTE") ? "tmute" : "mute";
                 databaseManager.archivePunishment(
                         punishment,
                         targetName,
@@ -52,7 +52,7 @@ public class Unmute implements CommandExecutor {
                         reason,
                         punishmentType
                 );
-                databaseManager.removePunishment(targetUUID, punishmentType);
+                databaseManager.removePunishment(targetUUID, punishmentType, targetName);
                 foundMute = true;
                 break;
             }

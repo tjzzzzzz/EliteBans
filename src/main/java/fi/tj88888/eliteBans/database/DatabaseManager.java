@@ -40,7 +40,7 @@ public class DatabaseManager {
 
     public Punishment getPunishment(UUID playerUUID) {
         if (databaseType == DatabaseType.MYSQL) {
-            String query = "SELECT * FROM punishments WHERE player_uuid = ? AND (type = 'BAN' OR type = 'TEMPBAN')";
+            String query = "SELECT * FROM punishments WHERE player_uuid = ? AND (type IN ('ban', 'tban', 'mute', 'tmute'))";
             try (PreparedStatement statement = mysqlConnection.prepareStatement(query)) {
                 statement.setString(1, playerUUID.toString());
                 ResultSet rs = statement.executeQuery();
@@ -84,6 +84,7 @@ public class DatabaseManager {
         }
         return null;
     }
+
 
     public void addPunishment(Punishment punishment, String playerName, String issuedByName, boolean nameBased) {
         long currentTimestamp = System.currentTimeMillis();
@@ -131,21 +132,55 @@ public class DatabaseManager {
                 "player_name VARCHAR(100) NOT NULL," +
                 "reason TEXT NOT NULL," +
                 "type VARCHAR(10) NOT NULL," +
-                "expiration_time BIGINT NOT NULL," +
+                "expiration_time BIGINT NOT NULL DEFAULT -1," +
+                "expired_at BIGINT NOT NULL DEFAULT -1," + // Default set to -1
                 "issued_by VARCHAR(36) NOT NULL," +
                 "issued_by_name VARCHAR(100) NOT NULL," +
-                "name_based BOOLEAN DEFAULT FALSE" +
+                "name_based BOOLEAN DEFAULT FALSE," +
+                "timestamp BIGINT NOT NULL DEFAULT -1," +
+                "ban_duration VARCHAR(100)" +
                 ")";
         try (PreparedStatement statement = mysqlConnection.prepareStatement(createTableQuery)) {
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        String createHistoryTable = "CREATE TABLE IF NOT EXISTS punishment_history (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY," +
+                "uuid VARCHAR(36) NOT NULL," +
+                "type VARCHAR(10) NOT NULL," +
+                "reason TEXT NOT NULL," +
+                "issued_by_uuid VARCHAR(36)," +
+                "issued_by_name VARCHAR(100)," +
+                "issued_at BIGINT NOT NULL," +
+                "unbanned_at BIGINT," +
+                "unmuted_at BIGINT," +
+                "expired_at BIGINT NOT NULL DEFAULT -1," + // Default set to -1
+                "unbanned_by_uuid VARCHAR(36)," +
+                "unbanned_by_name VARCHAR(100)," +
+                "unmuted_by_uuid VARCHAR(36)," +
+                "unmuted_by_name VARCHAR(100)," +
+                "unban_reason TEXT," +
+                "unmute_reason TEXT," +
+                "ban_duration VARCHAR(100)," +
+                "expiration_time BIGINT NOT NULL DEFAULT -1," +
+                "timestamp BIGINT NOT NULL DEFAULT -1" +
+                ")";
+        try (PreparedStatement statement = mysqlConnection.prepareStatement(createHistoryTable)) {
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
+
+
+
 
     private void setupMongoDBCollections() {
         if (mongoDatabase.getCollection("punishments") == null) {
             mongoDatabase.createCollection("punishments");
+            mongoDatabase.createCollection("punishment_history");
         }
     }
 
@@ -200,36 +235,64 @@ public class DatabaseManager {
         MYSQL, MONGODB
     }
 
-    public void removePunishment(UUID playerUUID, String punishmentType) {
+    public void removePunishment(UUID playerUUID, String punishmentType, String playerName) {
         Punishment punishment = getPunishment(playerUUID);
+        String punishmentString = punishmentType.equalsIgnoreCase("tban") ? "tban" :
+                punishmentType.equalsIgnoreCase("ban") ? "ban" :
+                        punishmentType.equalsIgnoreCase("tmute") ? "tmute" :
+                                punishmentType.equalsIgnoreCase("mute") ? "mute" :
+                                        punishmentType.equalsIgnoreCase("warn") ? "warn" :
+                                                punishmentType.toLowerCase();
+
         if (punishment != null) {
             if (databaseType == DatabaseType.MYSQL) {
                 String query = "DELETE FROM punishments WHERE player_uuid = ? AND type = ?";
                 try (PreparedStatement statement = mysqlConnection.prepareStatement(query)) {
                     statement.setString(1, playerUUID.toString());
-                    statement.setString(2, punishmentType.equals("tban") ? "TEMPBAN" :
-                            punishmentType.equals("ban") ? "BAN" :
-                                    punishmentType.toUpperCase());
-                    statement.executeUpdate();
+                    statement.setString(2, punishmentString);
+                    System.out.println("Executing query: " + query);
+                    System.out.println("Parameters: player_uuid = " + playerUUID + ", type = " + punishmentString);
+                    int rowsAffected = statement.executeUpdate();
+                    System.out.println("Rows affected: " + rowsAffected);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             } else if (databaseType == DatabaseType.MONGODB) {
-                String actualType = punishmentType.equals("tban") ? "TEMPBAN" :
-                        punishmentType.equals("ban") ? "BAN" :
-                                punishmentType.equals("tmute") ? "TEMPMUTE" :
-                                        punishmentType.equals("mute") ? "MUTE" :
-                                                punishmentType.toUpperCase();
-
                 mongoDatabase.getCollection("punishments").deleteOne(
                         Filters.and(
                                 eq("player_uuid", playerUUID.toString()),
-                                eq("type", actualType)
+                                eq("type", punishmentString)
+                        )
+                );
+            }
+        } else {
+            System.out.println("No punishment found for player UUID: " + playerUUID);
+            System.out.println("Checking for punishments using player_name: " + playerName);
+            if (databaseType == DatabaseType.MYSQL) {
+                String query = "DELETE FROM punishments WHERE player_name = ? AND type = ?";
+                try (PreparedStatement statement = mysqlConnection.prepareStatement(query)) {
+                    statement.setString(1, playerName);
+                    statement.setString(2, punishmentString);
+                    // Debugging output
+                    System.out.println("Executing fallback query: " + query);
+                    System.out.println("Parameters: player_name = " + playerName + ", type = " + punishmentString);
+                    int rowsAffected = statement.executeUpdate();
+                    System.out.println("Rows affected (fallback): " + rowsAffected);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            } else if (databaseType == DatabaseType.MONGODB) {
+                mongoDatabase.getCollection("punishments").deleteOne(
+                        Filters.and(
+                                eq("player_name", playerName),
+                                eq("type", punishmentString)
                         )
                 );
             }
         }
     }
+
+
 
     public void archivePunishment(Punishment punishment, String targetDisplayName, UUID unbannedByUUID,
                                   String unbannedByName, String unbanReason, String archiveType) {
@@ -240,7 +303,7 @@ public class DatabaseManager {
             String query;
             if (archiveType.equals("mute") || archiveType.equals("tmute")) {
                 query = "INSERT INTO punishment_history (uuid, type, reason, issued_by_uuid, issued_by_name, issued_at, " +
-                        "unmuted_at, unmuted_by_uuid, unmuted_by_name, unmute_reason, mute_duration) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        "unmuted_at, unmuted_by_uuid, unmuted_by_name, unmute_reason, ban_duration) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             } else {
                 query = "INSERT INTO punishment_history (uuid, type, reason, issued_by_uuid, issued_by_name, issued_at, " +
                         "unbanned_at, unbanned_by_uuid, unbanned_by_name, unban_reason, ban_duration) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -277,7 +340,7 @@ public class DatabaseManager {
                         .append("unmuted_by_uuid", unbannedByUUID != null ? unbannedByUUID.toString() : null)
                         .append("unmuted_by_name", unbannedByName)
                         .append("unmute_reason", unbanReason)
-                        .append("mute_duration", banDuration);
+                        .append("ban_duration", banDuration);
             } else {
                 newHistoryEntry.append("unbanned_at", now)
                         .append("unbanned_by_uuid", unbannedByUUID != null ? unbannedByUUID.toString() : null)
@@ -309,7 +372,7 @@ public class DatabaseManager {
                             issuedByUUID
                     );
                     punishment.setTimestamp(rs.getLong("issued_at"));
-                    String durationType = rs.getString("type").toLowerCase().contains("mute") ? "mute_duration" : "ban_duration";
+                    String durationType = "ban_duration";
                     String duration = rs.getString(durationType);
                     if (duration == null || duration.trim().isEmpty()) {
                         duration = "N/A";
@@ -355,7 +418,7 @@ public class DatabaseManager {
                             issuedByUUID
                     );
                     punishment.setTimestamp(document.getLong("issued_at"));
-                    String durationType = document.getString("type").toLowerCase().contains("mute") ? "mute_duration" : "ban_duration";
+                    String durationType = "ban_duration";
                     String duration = document.getString(durationType);
                     if (duration == null || duration.trim().isEmpty()) {
                         duration = "N/A";

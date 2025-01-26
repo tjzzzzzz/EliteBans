@@ -55,10 +55,10 @@ public class Unban implements CommandExecutor {
         List<Punishment> activePunishments = databaseManager.getActivePunishments(targetUUID);
         boolean foundBan = false;
         for (Punishment punishment : activePunishments) {
-            if ("BAN".equalsIgnoreCase(punishment.getType()) || "TEMPBAN".equalsIgnoreCase(punishment.getType())) {
-                String punishmentType = punishment.getType().equalsIgnoreCase("TEMPBAN") ? "tban" : "ban";
+            if ("BAN".equalsIgnoreCase(punishment.getType()) || "TBAN".equalsIgnoreCase(punishment.getType())) {
+                String punishmentType = punishment.getType().equalsIgnoreCase("TBAN") ? "tban" : "ban";
                 databaseManager.archivePunishment(punishment, targetDisplayName, unbannedByUUID, unbannedByName, reason, punishmentType);
-                databaseManager.removePunishment(targetUUID, punishmentType);
+                databaseManager.removePunishment(targetUUID, punishmentType, targetName);
                 foundBan = true;
                 break;
             }

@@ -57,8 +57,10 @@ public class Hist implements CommandExecutor {
                 sender.sendMessage(ChatColor.LIGHT_PURPLE + "Type: " + ChatColor.WHITE + punishment.getType());
                 sender.sendMessage(ChatColor.LIGHT_PURPLE + "Reason: " + ChatColor.WHITE + punishment.getReason());
                 sender.sendMessage(ChatColor.LIGHT_PURPLE + "Issued By: " + ChatColor.WHITE + punishment.getIssuedByName());
-                sender.sendMessage(ChatColor.LIGHT_PURPLE + "Duration: " + ChatColor.WHITE + punishment.getDurationText());
                 sender.sendMessage(ChatColor.LIGHT_PURPLE + "Issued At: " + ChatColor.WHITE + formatDate(punishment.getTimestamp()));
+                if (!punishment.getType().equalsIgnoreCase("warn")) {
+                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Duration: " + ChatColor.WHITE + punishment.getDurationText());
+                }
                 if (punishment.getUnbannedByName() != null) {
                     if (punishment.getType().equalsIgnoreCase("ban") || punishment.getType().equalsIgnoreCase("tban")) {
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + "Unbanned By: " + ChatColor.WHITE + punishment.getUnbannedByName());

@@ -42,7 +42,7 @@ public class TempMute implements CommandExecutor {
         UUID targetUUID = getPlayerUUID(targetName);
         UUID muterUUID = sender instanceof Player ? ((Player) sender).getUniqueId() : null;
         String muterName = sender instanceof Player ? sender.getName() : "Console";
-        Punishment punishment = new Punishment(targetUUID, reason, "TEMPMUTE", expirationTimestamp, muterUUID);
+        Punishment punishment = new Punishment(targetUUID, reason, "tmute", expirationTimestamp, muterUUID);
         punishment.setTimestamp(System.currentTimeMillis());
         punishment.setDurationText(durationText);
         databaseManager.addPunishment(punishment, targetName, muterName, false);

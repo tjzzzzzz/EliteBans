@@ -58,7 +58,7 @@ public class TempBan implements CommandExecutor {
             bannerDisplayName = bannerName;
         }
         boolean nameBasedBan = Bukkit.getPlayerExact(targetName) == null && !Bukkit.getOfflinePlayer(targetName).hasPlayedBefore();
-        Punishment punishment = new Punishment(targetUUID, reason, "TEMPBAN", expirationTimestamp, bannerUUID);
+        Punishment punishment = new Punishment(targetUUID, reason, "tban", expirationTimestamp, bannerUUID);
         punishment.setTimestamp(System.currentTimeMillis());
         punishment.setDurationText(durationText);
         databaseManager.addPunishment(punishment, targetName, bannerDisplayName, nameBasedBan);

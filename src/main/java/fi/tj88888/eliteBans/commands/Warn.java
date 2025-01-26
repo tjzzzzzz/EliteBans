@@ -44,7 +44,7 @@ public class Warn implements CommandExecutor {
         Punishment punishment = new Punishment(
                 targetUUID,
                 reason,
-                "WARN",
+                "warn",
                 -1,
                 issuerUUID
         );
@@ -65,8 +65,8 @@ public class Warn implements CommandExecutor {
                 reason,
                 "warn"
         );
-        String punishmentType = "WARN";
-        databaseManager.removePunishment(targetUUID, punishmentType);
+        String punishmentType = "warn";
+        databaseManager.removePunishment(targetUUID, punishmentType, targetName);
         sender.sendMessage(ChatColor.GREEN + targetName + " has been warned: " + reason);
         return true;
     }

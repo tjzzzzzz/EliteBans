@@ -39,7 +39,7 @@ public class Ban implements CommandExecutor {
         String issuerName = sender instanceof Player ? ((Player) sender).getName() : "Console";
         String targetDisplayName = getPlayerDisplayName(targetUUID);
         boolean isNameBasedBan = Bukkit.getPlayerExact(targetName) == null && !Bukkit.getOfflinePlayer(targetName).hasPlayedBefore();
-        Punishment punishment = new Punishment(targetUUID, reason, "BAN", -1, issuerUUID);
+        Punishment punishment = new Punishment(targetUUID, reason, "ban", -1, issuerUUID);
         punishment.setTimestamp(System.currentTimeMillis());
         databaseManager.addPunishment(punishment, targetName, issuerName, isNameBasedBan);
         broadcastBan(targetDisplayName, issuerName, reason);

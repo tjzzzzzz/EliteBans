@@ -36,7 +36,7 @@ public class Mute implements CommandExecutor {
         Punishment punishment = new Punishment(
                 targetUUID,
                 reason,
-                "MUTE",
+                "mute",
                 -1,
                 issuerUUID
         );
