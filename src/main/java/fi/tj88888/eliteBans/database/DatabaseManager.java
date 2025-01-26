@@ -617,4 +617,46 @@ public class DatabaseManager {
         return removedCount;
     }
 
+    public Punishment getPunishmentByName(String playerName) {
+        if (databaseType == DatabaseType.MONGODB) {
+            MongoCollection<Document> collection = mongoDatabase.getCollection("punishments");
+            Document document = collection.find(eq("player_name", playerName)).first();
+            if (document != null) {
+                String issuedByString = document.getString("issued_by");
+                UUID issuedByUUID = "CONSOLE".equals(issuedByString) ? null : UUID.fromString(issuedByString);
+                Long expirationTime = document.getLong("expiration_time") != null ? document.getLong("expiration_time") : -1L;
+
+                return new Punishment(
+                        document.getInteger("id", -1),
+                        UUID.fromString(document.getString("player_uuid")),
+                        document.getString("reason"),
+                        document.getString("type"),
+                        expirationTime,
+                        issuedByUUID
+                );
+            }
+        } else if (databaseType == DatabaseType.MYSQL) {
+            String query = "SELECT * FROM punishments WHERE player_name = ? AND (type IN ('ban', 'tban', 'mute', 'tmute'))";
+            try (PreparedStatement statement = mysqlConnection.prepareStatement(query)) {
+                statement.setString(1, playerName);
+                ResultSet rs = statement.executeQuery();
+                if (rs.next()) {
+                    String issuedByString = rs.getString("issued_by");
+                    UUID issuedByUUID = "CONSOLE".equals(issuedByString) ? null : UUID.fromString(issuedByString);
+                    return new Punishment(
+                            rs.getInt("id"),
+                            UUID.fromString(rs.getString("player_uuid")),
+                            rs.getString("reason"),
+                            rs.getString("type"),
+                            rs.getLong("expiration_time"),
+                            issuedByUUID
+                    );
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
 }

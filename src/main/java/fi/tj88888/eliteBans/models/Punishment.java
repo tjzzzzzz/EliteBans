@@ -1,7 +1,6 @@
 package fi.tj88888.eliteBans.models;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import java.text.SimpleDateFormat;
 import java.util.UUID;
 
 public class Punishment {
@@ -16,9 +15,7 @@ public class Punishment {
     private String unbanReason;
     private long unbanTimestamp;
     private String durationText;
-    /**
-     * Full constructor. ID can be null for new punishments.
-     */
+
     public Punishment(Integer id, UUID playerId, String reason, String type, long expirationTime, UUID issuedBy) {
         this.id = id;
         this.playerId = playerId;
@@ -27,9 +24,7 @@ public class Punishment {
         this.expirationTime = expirationTime;
         this.issuedBy = issuedBy;
     }
-    /**
-     * Constructor for new punishments without a pre-defined ID.
-     */
+
     public Punishment(UUID playerId, String reason, String type, long expirationTime, UUID issuedBy) {
         this(null, playerId, reason, type, expirationTime, issuedBy);
     }

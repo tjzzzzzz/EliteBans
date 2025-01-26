@@ -1,10 +1,8 @@
 package fi.tj88888.eliteBans.utils;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
