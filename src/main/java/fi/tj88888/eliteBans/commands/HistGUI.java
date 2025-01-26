@@ -1,6 +1,7 @@
 package fi.tj88888.eliteBans.commands;
 
 import fi.tj88888.eliteBans.database.DatabaseManager;
+import fi.tj88888.eliteBans.utils.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -26,17 +27,17 @@ public class HistGUI implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "This command can only be used by players!");
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.player-only", "You cannot run this command in console."));
             return true;
         }
 
         if (!sender.hasPermission("elitebans.command.hist")) {
-            sender.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.no-permission", "&cYou don't have permission to use this command!"));
             return true;
         }
 
         if (args.length < 1) {
-            sender.sendMessage(ChatColor.RED + "Usage: /histgui <player>");
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.histgui-usage", "&fUsage: /&dhistgui &f<&dplayer&f>"));
             return true;
         }
 
@@ -44,7 +45,8 @@ public class HistGUI implements CommandExecutor {
         UUID targetUUID = getPlayerUUID(targetName);
 
         if (targetUUID == null) {
-            sender.sendMessage(ChatColor.RED + "Player not found!");
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.player-not-found", "&fPlayer &d%player%&f does not exist!")
+                    .replace("%player%", targetName));
             return true;
         }
 

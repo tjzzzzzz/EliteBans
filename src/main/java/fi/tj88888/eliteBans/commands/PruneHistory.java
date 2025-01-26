@@ -1,6 +1,7 @@
 package fi.tj88888.eliteBans.commands;
 
 import fi.tj88888.eliteBans.database.DatabaseManager;
+import fi.tj88888.eliteBans.utils.MessageUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,19 +27,15 @@ public class PruneHistory implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(NO_PERMISSION_MSG);
-            return true;
-        }
 
         Player player = (Player) sender;
         if (!player.hasPermission("elitebans.command.prunehistory")) {
-            player.sendMessage(NO_PERMISSION_MSG);
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.no-permission", "&cYou don't have permission to use this command!"));
             return true;
         }
 
         if (args.length != 2) {
-            player.sendMessage(USAGE_MSG);
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.prune-history-usage", "&fUsage: /&dprunehistory &f<&dplayer&f> <&dnumber of punishments&f>"));
             return true;
         }
 
@@ -60,7 +57,7 @@ public class PruneHistory implements CommandExecutor {
 
         int removedCount = databaseManager.pruneLatestPunishments(targetUUID, amount);
         if (removedCount > 0) {
-            player.sendMessage(ChatColor.GREEN + "Removed " + removedCount + " latest punishments from " + targetName + "'s history.");
+            player.sendMessage(ChatColor.GRAY + "Removed " + removedCount + " latest punishments from " + targetName + "'s history.");
         } else {
             player.sendMessage(ChatColor.RED + "No punishments found to remove from " + targetName + "'s history.");
         }

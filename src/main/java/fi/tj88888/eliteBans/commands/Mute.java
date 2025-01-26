@@ -1,6 +1,8 @@
 package fi.tj88888.eliteBans.commands;
 import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.models.Punishment;
+import fi.tj88888.eliteBans.utils.MessageUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,11 +19,11 @@ public class Mute implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player && !sender.hasPermission("elitebans.command.mute")) {
-            sender.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.no-permission", "&cYou don't have permission to use this command!"));
             return true;
         }
         if (args.length < 2) {
-            sender.sendMessage(ChatColor.RED + "Usage: /mute <player> <reason>");
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.mute-usage", "&fUsage: /&dmute &f<&dplayer&f> <&dreason&f>"));
             return true;
         }
         String targetName = args[0];
@@ -42,7 +44,16 @@ public class Mute implements CommandExecutor {
         );
         punishment.setTimestamp(System.currentTimeMillis());
         databaseManager.addPunishment(punishment, targetName, issuerName, false);
-        sender.sendMessage(ChatColor.GREEN + targetName + " has been muted: " + reason);
+        String muteMessage = (MessageUtil.getColoredMessage("messages.player-muted",
+                "&7(Silent) &d%player%&f has been muted by &d%muter%&f for &d%reason%",
+                "%player%", targetName,
+                "%muter%", issuerName,
+                "%reason%", reason));
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.hasPermission("elitebans.command.base")) {
+                player.sendMessage(muteMessage);
+            }
+        }
         return true;
     }
 }
