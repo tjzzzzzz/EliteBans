@@ -56,18 +56,15 @@ public class HistGUI implements CommandExecutor {
     private void openMainMenu(Player player, String targetName, UUID targetUUID) {
         Inventory inv = Bukkit.createInventory(null, 27,
                 ChatColor.DARK_PURPLE + targetName + "'s History" + "||" + targetUUID.toString());
-        // Fill all slots with gray glass panels first
         ItemStack filler = createMenuItem(Material.GRAY_STAINED_GLASS_PANE, " ");
         for (int i = 0; i < inv.getSize(); i++) {
             inv.setItem(i, filler);
         }
 
-        // Create menu items
         ItemStack bans = createMenuItem(Material.RED_CONCRETE, "Bans", "Click to view ban history");
         ItemStack mutes = createMenuItem(Material.YELLOW_CONCRETE, "Mutes", "Click to view mute history");
         ItemStack warns = createMenuItem(Material.ORANGE_CONCRETE, "Warns", "Click to view warn history");
 
-        // Set items in inventory
         inv.setItem(11, bans);
         inv.setItem(13, mutes);
         inv.setItem(15, warns);

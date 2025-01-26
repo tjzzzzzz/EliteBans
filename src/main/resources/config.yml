@@ -1,0 +1,9 @@
+database:
+  type: "mongodb" # mysql or mongodb
+  connectionString: "" # Full connection string for MongoDB
+  name: "elitebans"
+  username: ""
+  password: ""
+
+# True/False. Debug logs important information about a lot of things in console. (Not needed if everything works)
+debug: true

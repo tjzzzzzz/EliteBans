@@ -3,6 +3,7 @@ import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import fi.tj88888.eliteBans.models.Punishment;
+import fi.tj88888.eliteBans.utils.LogUtil;
 import org.bson.Document;
 import java.sql.*;
 import java.util.ArrayList;
@@ -250,10 +251,10 @@ public class DatabaseManager {
                 try (PreparedStatement statement = mysqlConnection.prepareStatement(query)) {
                     statement.setString(1, playerUUID.toString());
                     statement.setString(2, punishmentString);
-                    System.out.println("Executing query: " + query);
-                    System.out.println("Parameters: player_uuid = " + playerUUID + ", type = " + punishmentString);
+                    LogUtil.debug("Executing query: " + query);
+                    LogUtil.debug("Parameters: player_uuid = " + playerUUID + ", type = " + punishmentString);
                     int rowsAffected = statement.executeUpdate();
-                    System.out.println("Rows affected: " + rowsAffected);
+                    LogUtil.debug("Rows affected: " + rowsAffected);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -266,18 +267,17 @@ public class DatabaseManager {
                 );
             }
         } else {
-            System.out.println("No punishment found for player UUID: " + playerUUID);
-            System.out.println("Checking for punishments using player_name: " + playerName);
+            LogUtil.debug("No punishment found for player UUID: " + playerUUID);
+            LogUtil.debug("Checking for punishments using player_name: " + playerName);
             if (databaseType == DatabaseType.MYSQL) {
                 String query = "DELETE FROM punishments WHERE player_name = ? AND type = ?";
                 try (PreparedStatement statement = mysqlConnection.prepareStatement(query)) {
                     statement.setString(1, playerName);
                     statement.setString(2, punishmentString);
-                    // Debugging output
-                    System.out.println("Executing fallback query: " + query);
-                    System.out.println("Parameters: player_name = " + playerName + ", type = " + punishmentString);
+                    LogUtil.debug("Executing fallback query: " + query);
+                    LogUtil.debug("Parameters: player_name = " + playerName + ", type = " + punishmentString);
                     int rowsAffected = statement.executeUpdate();
-                    System.out.println("Rows affected (fallback): " + rowsAffected);
+                    LogUtil.debug("Rows affected (fallback): " + rowsAffected);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

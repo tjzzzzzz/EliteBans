@@ -5,6 +5,7 @@ import fi.tj88888.eliteBans.listeners.BanListener;
 import fi.tj88888.eliteBans.listeners.ChatListener;
 import fi.tj88888.eliteBans.listeners.HistoryGUIListener;
 import fi.tj88888.eliteBans.models.Punishment;
+import fi.tj88888.eliteBans.utils.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.List;
@@ -12,13 +13,15 @@ import java.util.logging.Level;
 
 public final class EliteBans extends JavaPlugin {
     private DatabaseManager databaseManager;
+    private boolean debug;
 
     @Override
     public void onEnable() {
         try {
+            LogUtil.init(this);
             this.saveDefaultConfig();
-            getLogger().info("Loading configuration...");
-
+            this.debug = this.getConfig().getBoolean("debug", false);
+            LogUtil.debug("Loading configuration...");
             String databaseType = this.getConfig().getString("database.type");
             String connectionString = this.getConfig().getString("database.connectionString");
             String databaseName = this.getConfig().getString("database.name");
@@ -26,7 +29,7 @@ public final class EliteBans extends JavaPlugin {
             String password = this.getConfig().getString("database.password", "");
 
             if (databaseType == null || connectionString == null || databaseName == null) {
-                getLogger().severe("Database configuration is incomplete!");
+                LogUtil.debug("Database configuration is incomplete!");
                 getServer().getPluginManager().disablePlugin(this);
                 return;
             }
@@ -83,7 +86,7 @@ public final class EliteBans extends JavaPlugin {
         for (Punishment punishment : expiredPunishments) {
             try {
                 databaseManager.archiveExpiredPunishment(punishment, punishment.getType().toLowerCase());
-                getLogger().info("Archived expired " + punishment.getType() + " for player UUID: " +
+                LogUtil.debug("Archived expired " + punishment.getType() + " for player UUID: " +
                         punishment.getPlayerId() + ", Duration: " + punishment.getDurationText());
             } catch (Exception e) {
                 getLogger().log(Level.SEVERE, "Failed to archive expired punishment", e);
@@ -100,5 +103,9 @@ public final class EliteBans extends JavaPlugin {
                 getLogger().log(Level.SEVERE, "Failed to close database connection", e);
             }
         }
+    }
+
+    public boolean isDebugEnabled() {
+        return debug;
     }
 }

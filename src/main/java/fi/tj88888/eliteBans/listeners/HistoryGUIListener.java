@@ -3,6 +3,7 @@ package fi.tj88888.eliteBans.listeners;
 import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.models.Punishment;
 import fi.tj88888.eliteBans.utils.DateUtil;
+import fi.tj88888.eliteBans.utils.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -40,12 +41,10 @@ public class HistoryGUIListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        // Check if it's the history GUI
         if (!event.getView().getTitle().contains("'s History")) {
             return;
         }
 
-        // Cancel the event to prevent item taking
         event.setCancelled(true);
 
         // Check permission
@@ -58,7 +57,6 @@ public class HistoryGUIListener implements Listener {
         UUID targetUUID = UUID.fromString(titleParts[1]);
         ItemStack clicked = event.getCurrentItem();
         if (clicked == null) return;
-        //Go back to main menu
         if (clicked.getType() == Material.BARRIER &&
                 clicked.getItemMeta().getDisplayName().equals(ChatColor.WHITE + "Go Back")) {
             if (titleParts.length >= 2) {
@@ -67,18 +65,15 @@ public class HistoryGUIListener implements Listener {
             }
             return;
         }
-        // Check if clicked item is red concrete with name "Bans"
         if (clicked.getType() == Material.RED_CONCRETE) {
             ItemMeta meta = clicked.getItemMeta();
             if (meta != null &&
                     meta.getDisplayName().equals(ChatColor.WHITE + "Bans") &&
                     meta.getLore() != null &&
                     meta.getLore().contains("Click to view ban history")) {
-                // Create ban history GUI for the player
                 createBanHistoryGUI((Player) event.getWhoClicked(), targetUUID);
             }
         }
-// Check if clicked item is yellow concrete with name ""
         if (clicked.getType() == Material.YELLOW_CONCRETE) {
             ItemMeta meta = clicked.getItemMeta();
             if (meta != null &&
@@ -88,7 +83,6 @@ public class HistoryGUIListener implements Listener {
                 createMuteHistoryGUI((Player) event.getWhoClicked(), targetUUID);
             }
         }
-
         if (clicked.getType() == Material.ORANGE_CONCRETE) {
             ItemMeta meta = clicked.getItemMeta();
             if (meta != null &&
@@ -98,8 +92,6 @@ public class HistoryGUIListener implements Listener {
                 createWarnHistoryGUI((Player) event.getWhoClicked(), targetUUID);
             }
         }
-
-        // pardon feature
         if (event.getClick() == ClickType.RIGHT && event.getCurrentItem() != null &&
                 event.getCurrentItem().getType() == Material.GREEN_CONCRETE) {
             Player player = (Player) event.getWhoClicked();
@@ -242,7 +234,6 @@ public class HistoryGUIListener implements Listener {
         }
 
 
-        // Only add unban/unmute details if it's not a warning
         if (punishment.getUnbannedByName() != null && !punishment.getType().equalsIgnoreCase("WARN")) {
             if (punishment.getType().equalsIgnoreCase("MUTE") || punishment.getType().equalsIgnoreCase("TMUTE")) {
                 lore.add(ChatColor.LIGHT_PURPLE + "Unmuted By: " + ChatColor.WHITE + punishment.getUnbannedByName());
@@ -265,18 +256,15 @@ public class HistoryGUIListener implements Listener {
     private void openMainMenu(Player player, String targetName, UUID targetUUID) {
         Inventory inv = Bukkit.createInventory(null, 27,
                 ChatColor.DARK_PURPLE + targetName + "'s History" + "||" + targetUUID.toString());
-        // Fill all slots with gray glass panels first
         ItemStack filler = createMenuItem(Material.GRAY_STAINED_GLASS_PANE, " ");
         for (int i = 0; i < inv.getSize(); i++) {
             inv.setItem(i, filler);
         }
 
-        // Create menu items
         ItemStack bans = createMenuItem(Material.RED_CONCRETE, "Bans", "Click to view ban history");
         ItemStack mutes = createMenuItem(Material.YELLOW_CONCRETE, "Mutes", "Click to view mute history");
         ItemStack warns = createMenuItem(Material.ORANGE_CONCRETE, "Warns", "Click to view warn history");
 
-        // Set items in inventory
         inv.setItem(11, bans);
         inv.setItem(13, mutes);
         inv.setItem(15, warns);
@@ -352,7 +340,7 @@ public class HistoryGUIListener implements Listener {
             String reason = event.getMessage();
             Punishment punishment = databaseManager.getPunishment(pardonData.targetUUID);
             if (punishment != null && punishment.getType().equalsIgnoreCase(pardonData.punishmentType)) {
-                Bukkit.getLogger().info("Punishment found for " + pardonData.targetUUID + " with reason: " + reason);
+                LogUtil.debug("Punishment found for " + pardonData.targetUUID + " with reason: " + reason);
 
                 databaseManager.archivePunishment(
                         punishment,
@@ -367,7 +355,7 @@ public class HistoryGUIListener implements Listener {
                 String actionType = pardonData.punishmentType.contains("ban") ? "unbanned" : "unmuted";
                 player.sendMessage(ChatColor.GREEN + "Successfully " + actionType + " player with reason: " + reason);
             } else {
-                Bukkit.getLogger().warning("Punishment not found for " + pardonData.targetUUID);
+                LogUtil.debug("Punishment not found for " + pardonData.targetUUID);
             }
         }
     }
