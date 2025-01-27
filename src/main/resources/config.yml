@@ -5,33 +5,11 @@ database:
   username: ""
   password: ""
 
-# True/False. Debug logs important information about a lot of things in console. (Not needed if everything works)
-debug: true
+debug: true # True/False. Displays some database usage information.
+history:
+  mode: "gui" # Possible values: "gui", "text", "both"
+  default-command: "gui" #
 
-# Color/Style codes for messages.
-# &4 - Dark-Red
-#&c - Red
-#&6 - Gold
-#&e - Yellow
-#&2 - Dark-Green
-# &a - Light-Green
-#&b - Aqua
-#&3 - Darker Shade Of Aqua
-#&1 - Dark-Blue
-# &9 - Light-Blue
-#&d - Light-Purple
-#&5 - Dark-Purple
-#&f - White
-#&7 - Gray
-#&8 - Dark-Gray
-#&0 - Black
-#&l - Bold
-#&n - Underline
-#&o - Itallic
-#&k - Magic
-#&m - Strike
-#r - Reset
-# NOTE DO NOT UNCOMMENT THESE!
 messages:
     no-permission: "You don't have permission to use this command"
     ban-usage: "Usage: /&dban &f<&dplayer&f> <&dreason&f>"
@@ -62,7 +40,6 @@ messages:
     invalid-duration: "Invalid duration format! Use formats like &d30m&f, &d2h&f, &d1d&f."
     temp-ban-message: "&dYou are temporarily banned from this server!\n&dReason: &f%reason%\n&dExpires In: &f%expires%\n&dAppeal At: &fdiscord.gg/example"
     ban-message: "&dYou are permanently banned from this server!\n&dReason: &f%reason%\n&dAppeal At: &fdiscord.gg/example"
-
 
     hist:
      usage: "&cUsage: /hist <player>"

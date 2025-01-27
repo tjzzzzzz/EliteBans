@@ -67,14 +67,30 @@ public final class EliteBans extends JavaPlugin {
     private void registerCommands() {
         this.getCommand("ban").setExecutor(new Ban(databaseManager));
         this.getCommand("unban").setExecutor(new Unban(databaseManager));
-        this.getCommand("hist").setExecutor(new Hist(databaseManager));
+        //this.getCommand("hist").setExecutor(new Hist(databaseManager));
         this.getCommand("tban").setExecutor(new TempBan(databaseManager));
         this.getCommand("mute").setExecutor(new Mute(databaseManager));
         this.getCommand("unmute").setExecutor(new Unmute(databaseManager));
         this.getCommand("tmute").setExecutor(new TempMute(databaseManager));
         this.getCommand("warn").setExecutor(new Warn(databaseManager));
         this.getCommand("prunehistory").setExecutor(new PruneHistory(databaseManager, getLogger()));
-        this.getCommand("histgui").setExecutor(new HistGUI(databaseManager));
+        //this.getCommand("histgui").setExecutor(new HistGUI(databaseManager));
+        String historyMode = getConfig().getString("history.mode", "both");
+        String defaultCommand = getConfig().getString("history.default-command", "gui");
+
+        if (historyMode.equalsIgnoreCase("gui")) {
+            this.getCommand("hist").setExecutor(new HistGUI(databaseManager));
+        } else if (historyMode.equalsIgnoreCase("text")) {
+            this.getCommand("hist").setExecutor(new Hist(databaseManager));
+        } else if (historyMode.equalsIgnoreCase("both")) {
+            this.getCommand("histgui").setExecutor(new HistGUI(databaseManager));
+            if (defaultCommand.equalsIgnoreCase("gui")) {
+                this.getCommand("hist").setExecutor(new HistGUI(databaseManager));
+            } else {
+                this.getCommand("hist").setExecutor(new Hist(databaseManager));
+            }
+        }
+
     }
 
     private void registerListeners() {

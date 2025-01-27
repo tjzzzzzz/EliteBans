@@ -3,7 +3,6 @@ import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.models.Punishment;
 import fi.tj88888.eliteBans.utils.MessageUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -39,7 +38,6 @@ public class Ban implements CommandExecutor {
         }
         UUID issuerUUID = sender instanceof Player ? ((Player) sender).getUniqueId() : null;
         String issuerName = sender instanceof Player ? ((Player) sender).getName() : "Console";
-        String targetDisplayName = getPlayerDisplayName(targetUUID);
         boolean isNameBasedBan = Bukkit.getPlayerExact(targetName) == null && !Bukkit.getOfflinePlayer(targetName).hasPlayedBefore();
         Punishment punishment = new Punishment(targetUUID, reason, "ban", -1, issuerUUID);
         punishment.setTimestamp(System.currentTimeMillis());

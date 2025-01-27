@@ -2,7 +2,6 @@ package fi.tj88888.eliteBans.listeners;
 import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.models.Punishment;
 import fi.tj88888.eliteBans.utils.MessageUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;

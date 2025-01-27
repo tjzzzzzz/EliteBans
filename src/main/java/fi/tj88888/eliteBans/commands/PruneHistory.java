@@ -14,8 +14,6 @@ import static fi.tj88888.eliteBans.utils.PlayerUtils.getPlayerUUID;
 
 public class PruneHistory implements CommandExecutor {
     private final DatabaseManager databaseManager;
-    private static final String NO_PERMISSION_MSG = ChatColor.RED + "You don't have permission to use this command!";
-    private static final String USAGE_MSG = ChatColor.RED + "Usage: /prunehistory <player> <amount>";
     private static final String NUMBER_ERROR_MSG = ChatColor.RED + "Amount must be a number!";
     private static final String PLAYER_NOT_FOUND_MSG = ChatColor.RED + "Player not found!";
     private final Logger logger;

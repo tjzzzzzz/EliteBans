@@ -3,7 +3,6 @@ import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.models.Punishment;
 import fi.tj88888.eliteBans.utils.MessageUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
