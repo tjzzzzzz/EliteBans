@@ -1,6 +1,7 @@
 package fi.tj88888.eliteBans.commands;
 import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.models.Punishment;
+import fi.tj88888.eliteBans.utils.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -22,12 +23,14 @@ public class Unban implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (!player.hasPermission("elitebans.command.unban")) {
-                player.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
+                player.sendMessage(MessageUtil.getColoredMessage("messages.no-permission",
+                        "&cYou don't have permission to use this command!"));
                 return true;
             }
         }
         if (args.length < 1) {
-            sender.sendMessage(ChatColor.RED + "Usage: /unban <player> [reason]");
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.unban-usage",
+                    "Usage: /&dunban &f<&dplayer&f>"));
             return true;
         }
         String targetName = args[0];
@@ -43,7 +46,9 @@ public class Unban implements CommandExecutor {
         }
         UUID targetUUID = getPlayerUUID(targetName);
         if (targetUUID == null) {
-            sender.sendMessage(ChatColor.RED + "Player " + targetName + " does not exist!");
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.player-not-found",
+                    "&fPlayer &d%player%&f does not exist!",
+                    "%player%", targetName));
             return true;
         }
         String targetDisplayName = getPlayerDisplayName(targetUUID);
@@ -64,10 +69,20 @@ public class Unban implements CommandExecutor {
             }
         }
         if (foundBan) {
-            sender.sendMessage(ChatColor.GREEN + "Player " + targetDisplayName + " has been successfully unbanned.");
-            Bukkit.broadcastMessage(ChatColor.YELLOW + targetDisplayName + " has been unbanned by " + unbannedByName + ".");
+            String tbanMessage = (MessageUtil.getColoredMessage("messages.player-unbanned",
+                    "&7(Silent) &d%player%&f has been unbanned by &d%unbanner%&f Reason: &d%reason%",
+                    "%player%", targetDisplayName,
+                    "%unbanner%", unbannedByName,
+                    "%reason%", reason));
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (player.hasPermission("elitebans.command.base")) {
+                    player.sendMessage(tbanMessage);
+                }
+            }
         } else {
-            sender.sendMessage(ChatColor.RED + "Player " + targetName + " is not banned!");
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.player-not-banned",
+                    "&d%player%&f is not banned!",
+                    "%player%", targetName));
         }
         return true;
     }

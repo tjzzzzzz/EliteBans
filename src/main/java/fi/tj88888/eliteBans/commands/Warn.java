@@ -2,6 +2,7 @@ package fi.tj88888.eliteBans.commands;
 
 import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.models.Punishment;
+import fi.tj88888.eliteBans.utils.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -21,12 +22,14 @@ public class Warn implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player && !sender.hasPermission("elitebans.command.warn")) {
-            sender.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.no-permission",
+                    "&cYou don't have permission to use this command!"));
             return true;
         }
 
         if (args.length < 2) {
-            sender.sendMessage(ChatColor.RED + "Usage: /warn <player> <reason>");
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.warn-usage",
+                    "Usage: /&dwarn &f<&dplayer&f> <&dreason&f>"));
             return true;
         }
 
@@ -55,7 +58,9 @@ public class Warn implements CommandExecutor {
         // Notify the target player if they're online
         Player targetPlayer = Bukkit.getPlayer(targetName);
         if (targetPlayer != null) {
-            targetPlayer.sendMessage(ChatColor.RED + "You've been warned for: " + ChatColor.WHITE + reason);
+            targetPlayer.sendMessage(MessageUtil.getColoredMessage("messages.warn-notification",
+                    "&dYou have been warned!\\n&fReason: &d%reason%",
+                    "%reason%", reason));
         }
         databaseManager.archivePunishment(
                 punishment,
@@ -67,7 +72,16 @@ public class Warn implements CommandExecutor {
         );
         String punishmentType = "warn";
         databaseManager.removePunishment(targetUUID, punishmentType, targetName);
-        sender.sendMessage(ChatColor.GREEN + targetName + " has been warned: " + reason);
+        String tmuteMessage = (MessageUtil.getColoredMessage("messages.player-warned",
+                "&7(Silent) &d%player%&f has been warned by &d%warner%&f Reason: &d%reason%",
+                "%player%", targetName,
+                "%warner%", issuerName,
+                "%reason%", reason));
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.hasPermission("elitebans.command.base")) {
+                player.sendMessage(tmuteMessage);
+            }
+        }
         return true;
     }
 }

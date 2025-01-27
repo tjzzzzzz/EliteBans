@@ -1,6 +1,8 @@
 package fi.tj88888.eliteBans.commands;
 import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.models.Punishment;
+import fi.tj88888.eliteBans.utils.MessageUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,11 +20,13 @@ public class Unmute implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player && !sender.hasPermission("elitebans.command.unmute")) {
-            sender.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.no-permission",
+                    "&cYou don't have permission to use this command!"));
             return true;
         }
         if (args.length < 1) {
-            sender.sendMessage(ChatColor.RED + "Usage: /unmute <player> [reason]");
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.unmute-usage",
+                    "Usage: /&dunmute &f<&dplayer&f>"));
             return true;
         }
         String targetName = args[0];
@@ -58,9 +62,20 @@ public class Unmute implements CommandExecutor {
             }
         }
         if (foundMute) {
-            sender.sendMessage(ChatColor.GREEN + "Player " + targetName + " has been unmuted.");
+            String tbanMessage = (MessageUtil.getColoredMessage("messages.player-unmuted",
+                    "&7(Silent) &d%player%&f has been unmuted by &d%unmuter%&f Reason: &d%reason%",
+                    "%player%", targetName,
+                    "%unmuter%", unmutedByName,
+                    "%reason%", reason));
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (player.hasPermission("elitebans.command.base")) {
+                    player.sendMessage(tbanMessage);
+                }
+            }
         } else {
-            sender.sendMessage(ChatColor.RED + "Player " + targetName + " is not muted!");
+            sender.sendMessage(MessageUtil.getColoredMessage("messages.player-not-muted",
+                    "&d%player%&f is not muted!",
+                    "%player%", targetName));
         }
         return true;
     }

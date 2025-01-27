@@ -54,6 +54,14 @@ public class Mute implements CommandExecutor {
                 player.sendMessage(muteMessage);
             }
         }
+
+        Player targetPlayer = Bukkit.getPlayer(targetName);
+
+        if (targetPlayer != null) {
+            targetPlayer.sendMessage(MessageUtil.getColoredMessage("messages.mute-notification",
+                    "&dYou have been muted!\\n&fReason: &d%reason%",
+                    "%reason%", reason));
+        }
         return true;
     }
 }
