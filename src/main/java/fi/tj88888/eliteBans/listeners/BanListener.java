@@ -2,10 +2,14 @@ package fi.tj88888.eliteBans.listeners;
 
 import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.models.Punishment;
+import fi.tj88888.eliteBans.utils.LogUtil;
+import fi.tj88888.eliteBans.utils.MessageUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
+
+import java.util.List;
 import java.util.UUID;
 import static fi.tj88888.eliteBans.utils.PlayerUtils.formatRemainingTime;
 
@@ -17,39 +21,37 @@ public class BanListener implements Listener {
     }
 
     private enum PunishmentType {
-        BAN, TBAN
+        ban, tban
     }
 
     @EventHandler
     public void onPlayerLogin(PlayerLoginEvent event) {
         UUID playerUUID = event.getPlayer().getUniqueId();
-        Punishment punishment = databaseManager.getPunishment(playerUUID);
+        List<Punishment> activePunishments = databaseManager.getActivePunishments(playerUUID);
 
-        if (punishment == null) {
+
+        if (activePunishments == null) {
+            LogUtil.debug("Punishment on join is null");
             return;
         }
 
-        PunishmentType punishmentType;
-        try {
-            punishmentType = PunishmentType.valueOf(punishment.getType().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return;
+
+        for (Punishment punishment : activePunishments) {
+            if (punishment.getType().equalsIgnoreCase("ban")) {
+                String banMessage = MessageUtil.getColoredMessage("messages.ban-message",
+                        "&dYou are permanently banned from this server.\n&fReason: &d%reason%\n&fAppeal At: &ddiscord.gg/example",
+                        "%reason%", punishment.getReason());
+                event.disallow(PlayerLoginEvent.Result.KICK_BANNED, banMessage);
+                return;
+            } else if (punishment.getType().equalsIgnoreCase("tban")) {
+                String tbanMessage = MessageUtil.getColoredMessage("messages.temp-ban-message",
+                        "&dYou are temporarily banned from this server.\nExpires In: &f%expires%\n&fAppeal At: &ddiscord.gg/example",
+                        "%expires%", formatRemainingTime(punishment.getExpirationTime()),
+                        "%reason%", punishment.getReason());
+                event.disallow(PlayerLoginEvent.Result.KICK_BANNED, tbanMessage);
+                return;
+            }
         }
 
-        switch (punishmentType) {
-            case BAN:
-                disallowPlayer(event, "You are permanently banned from this server.", punishment.getReason());
-                break;
-            case TBAN:
-                String banMessage = "You are temporarily banned from this server.\n" +
-                        "Expires In: " + ChatColor.WHITE + formatRemainingTime(punishment.getExpirationTime());
-                disallowPlayer(event, banMessage, punishment.getReason());
-                break;
-        }
-    }
-
-    private void disallowPlayer(PlayerLoginEvent event, String banMessage, String reason) {
-        event.disallow(PlayerLoginEvent.Result.KICK_BANNED,
-                ChatColor.RED + banMessage + ChatColor.RED + "\nReason: " + ChatColor.WHITE + reason);
     }
 }

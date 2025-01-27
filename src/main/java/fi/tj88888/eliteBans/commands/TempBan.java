@@ -93,9 +93,11 @@ public class TempBan implements CommandExecutor {
         Player targetPlayer = Bukkit.getPlayerExact(targetName);
         if (targetPlayer != null) {
             targetPlayer.kickPlayer(MessageUtil.getColoredMessage("messages.temp-ban-notification",
-                    "&dYou have been temporarily banned!\\nReason: &f%reason%&d\\nDuration: &f%duration% \\n&dAppeal At: discord.gg/example",
+                    "&dYou are temporarily banned from this server!\\n&dReason: &f%reason%\\n&dExpires In: &f%expires%\\n&dAppeal At: &fdiscord.gg/example",
                     "%reason%", reason,
-                    "%duration%", durationText));
+                    "%duration%", durationText,
+                    "%expires%", formatRemainingTime(punishment.getExpirationTime())
+            ));
         }
 
         return true;

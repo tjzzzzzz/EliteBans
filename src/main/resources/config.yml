@@ -55,11 +55,13 @@ messages:
     player-warned: "&7(Silent) &d%player%&f has been warned by &d%warner%&f Reason: &d%reason%"
     ban-notification: "&dYou have been permanently banned!\n&fReason: &d%reason%\n&fAppeal At: &ddiscord.gg/example"
     mute-notification: "&dYou have been muted!\n&fReason: &d%reason%"
-    temp-ban-notification: "&dYou have been temporarily banned!\n&fReason: &d%reason%\n&fDuration: &d%duration%\n&fAppeal At: &ddiscord.gg/example"
+    temp-ban-notification: "&dYou have been temporarily banned!\n&dReason: &f%reason%\n&dExpires In: &f%expires%\n&dAppeal At: &fdiscord.gg/example"
     temp-mute-notification: "&dYou have been temporarily muted!\n&dReason: &f%reason%\n&dDuration: &f%duration%"
     warn-notification: "&dYou have been warned!\n&fReason: &d%reason%"
     player-only: "You cannot run this command in console."
     invalid-duration: "Invalid duration format! Use formats like &d30m&f, &d2h&f, &d1d&f."
+    temp-ban-message: "&dYou are temporarily banned from this server!\n&dReason: &f%reason%\n&dExpires In: &f%expires%\n&dAppeal At: &fdiscord.gg/example"
+    ban-message: "&dYou are permanently banned from this server!\n&dReason: &f%reason%\n&dAppeal At: &fdiscord.gg/example"
 
 
     hist:
