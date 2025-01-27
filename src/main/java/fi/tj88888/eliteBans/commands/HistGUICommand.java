@@ -17,10 +17,10 @@ import java.util.UUID;
 
 import static fi.tj88888.eliteBans.utils.PlayerUtils.getPlayerUUID;
 
-public class HistGUI implements CommandExecutor {
+public class HistGUICommand implements CommandExecutor {
     private final DatabaseManager databaseManager;
 
-    public HistGUI(DatabaseManager databaseManager) {
+    public HistGUICommand(DatabaseManager databaseManager) {
         this.databaseManager = databaseManager;
     }
 

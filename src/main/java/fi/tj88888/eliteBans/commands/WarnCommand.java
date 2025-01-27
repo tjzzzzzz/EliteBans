@@ -11,10 +11,10 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 import static fi.tj88888.eliteBans.utils.PlayerUtils.getPlayerUUID;
 
-public class Warn implements CommandExecutor {
+public class WarnCommand implements CommandExecutor {
     private final DatabaseManager databaseManager;
 
-    public Warn(DatabaseManager databaseManager) {
+    public WarnCommand(DatabaseManager databaseManager) {
         this.databaseManager = databaseManager;
     }
 

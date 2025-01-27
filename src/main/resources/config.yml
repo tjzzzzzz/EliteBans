@@ -7,8 +7,8 @@ database:
 
 debug: true # True/False. Displays some database usage information.
 history:
-  mode: "gui" # Possible values: "gui", "text", "both"
-  default-command: "gui" #
+  mode: "gui" # Possible values: "gui", "text"
+
 
 messages:
     no-permission: "You don't have permission to use this command"

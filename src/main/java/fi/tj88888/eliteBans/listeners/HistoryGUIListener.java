@@ -4,6 +4,7 @@ import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.models.Punishment;
 import fi.tj88888.eliteBans.utils.DateUtil;
 import fi.tj88888.eliteBans.utils.LogUtil;
+import fi.tj88888.eliteBans.utils.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -47,7 +48,6 @@ public class HistoryGUIListener implements Listener {
 
         event.setCancelled(true);
 
-        // Check permission
         if (!event.getWhoClicked().hasPermission("elitebans.command.hist")) {
             event.getWhoClicked().sendMessage(ChatColor.RED + "You don't have permission to view histories!");
             return;
@@ -114,13 +114,11 @@ public class HistoryGUIListener implements Listener {
         Inventory gui = Bukkit.createInventory(null, 54,
                 ChatColor.DARK_PURPLE + Bukkit.getOfflinePlayer(targetUUID).getName() + "'s History" + "||" + targetUUID.toString());
 
-        // Fill the border with gray glass panes
         ItemStack border = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta borderMeta = border.getItemMeta();
         borderMeta.setDisplayName(" ");
         border.setItemMeta(borderMeta);
 
-        // Set back button
         ItemStack backButton = new ItemStack(Material.BARRIER);
         ItemMeta backMeta = backButton.getItemMeta();
         backMeta.setDisplayName(ChatColor.WHITE + "Go Back");
@@ -128,29 +126,26 @@ public class HistoryGUIListener implements Listener {
         backButton.setItemMeta(backMeta);
         gui.setItem(4, backButton);
 
-        // Fill only top and bottom rows with border
         for (int i = 0; i < 9; i++) {
-            if (i != 4) {  // Skip slot 4 for back button
-                gui.setItem(i, border);  // Top row
+            if (i != 4) {
+                gui.setItem(i, border);
             }
-            gui.setItem(i + 45, border); // Bottom row
+            gui.setItem(i + 45, border);
         }
 
         List<Punishment> activePunishments = databaseManager.getActivePunishments(targetUUID);
         List<Punishment> historicalPunishments = databaseManager.getPunishmentHistory(targetUUID);
-        // Get punishments
         List<Punishment> allPunishments = new ArrayList<>();
         allPunishments.addAll(activePunishments);
         allPunishments.addAll(historicalPunishments);
 
-        // Sort all punishments by timestamp in descending order (most recent first)
         allPunishments.sort((p1, p2) -> Long.compare(p2.getTimestamp(), p1.getTimestamp()));
 
-        int slot = 9; // Start from slot 9
+        int slot = 9;
         for (Punishment punishment : allPunishments) {
             if (punishment.getType().equalsIgnoreCase("BAN") ||
                     punishment.getType().equalsIgnoreCase("TBAN")) {
-                if (slot >= 45) break; // Prevent overflow
+                if (slot >= 45) break;
                 boolean isActive = activePunishments.contains(punishment);
                 ItemStack item = createPunishmentItem(punishment, isActive);
                 gui.setItem(slot, item);
@@ -165,13 +160,11 @@ public class HistoryGUIListener implements Listener {
         Inventory gui = Bukkit.createInventory(null, 54,
                 ChatColor.DARK_PURPLE + Bukkit.getOfflinePlayer(targetUUID).getName() + "'s History" + "||" + targetUUID.toString());
 
-        // Fill the border with gray glass panes
         ItemStack border = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta borderMeta = border.getItemMeta();
         borderMeta.setDisplayName(" ");
         border.setItemMeta(borderMeta);
 
-        // Set back button
         ItemStack backButton = new ItemStack(Material.BARRIER);
         ItemMeta backMeta = backButton.getItemMeta();
         backMeta.setDisplayName(ChatColor.WHITE + "Go Back");
@@ -179,12 +172,11 @@ public class HistoryGUIListener implements Listener {
         backButton.setItemMeta(backMeta);
         gui.setItem(4, backButton);
 
-        // Fill only top and bottom rows with border
         for (int i = 0; i < 9; i++) {
-            if (i != 4) {  // Skip slot 4 for back button
-                gui.setItem(i, border);  // Top row
+            if (i != 4) {
+                gui.setItem(i, border);
             }
-            gui.setItem(i + 45, border); // Bottom row
+            gui.setItem(i + 45, border);
         }
 
         List<Punishment> activePunishments = databaseManager.getActivePunishments(targetUUID);
@@ -193,14 +185,13 @@ public class HistoryGUIListener implements Listener {
         allPunishments.addAll(activePunishments);
         allPunishments.addAll(historicalPunishments);
 
-        // Sort all punishments by timestamp in descending order
         allPunishments.sort((p1, p2) -> Long.compare(p2.getTimestamp(), p1.getTimestamp()));
 
-        int slot = 9; // Start from slot 9
+        int slot = 9;
         for (Punishment punishment : allPunishments) {
             if (punishment.getType().equalsIgnoreCase("MUTE") ||
                     punishment.getType().equalsIgnoreCase("TMUTE")) {
-                if (slot >= 45) break; // Prevent overflow
+                if (slot >= 45) break;
                 boolean isActive = activePunishments.contains(punishment);
                 ItemStack item = createPunishmentItem(punishment, isActive);
                 gui.setItem(slot, item);
@@ -221,7 +212,6 @@ public class HistoryGUIListener implements Listener {
         lore.add(ChatColor.LIGHT_PURPLE + "Issued By: " + ChatColor.WHITE + punishment.getIssuedByName());
         lore.add(ChatColor.LIGHT_PURPLE + "Issued At: " + ChatColor.WHITE + DateUtil.formatDate(punishment.getTimestamp()));
 
-        // Only add duration if not a warning
         if (!punishment.getType().equalsIgnoreCase("WARN")) {
             lore.add(ChatColor.LIGHT_PURPLE + "Duration: " + ChatColor.WHITE + punishment.getDurationText());
             if (punishment.getExpirationTime() > 0) {
@@ -229,7 +219,7 @@ public class HistoryGUIListener implements Listener {
             }
         }
         if (active) {
-            lore.add(""); // Empty line for spacing
+            lore.add("");
             lore.add(ChatColor.RED + "Right-click to pardon");
         }
 
@@ -237,11 +227,11 @@ public class HistoryGUIListener implements Listener {
         if (punishment.getUnbannedByName() != null && !punishment.getType().equalsIgnoreCase("WARN")) {
             if (punishment.getType().equalsIgnoreCase("MUTE") || punishment.getType().equalsIgnoreCase("TMUTE")) {
                 lore.add(ChatColor.LIGHT_PURPLE + "Unmuted By: " + ChatColor.WHITE + punishment.getUnbannedByName());
-                lore.add(ChatColor.LIGHT_PURPLE + "Unmute Reason: " + ChatColor.WHITE + punishment.getUnbanReason());
+                lore.add(ChatColor.LIGHT_PURPLE + "UnmuteCommand Reason: " + ChatColor.WHITE + punishment.getUnbanReason());
                 lore.add(ChatColor.LIGHT_PURPLE + "Unmuted At: " + ChatColor.WHITE + DateUtil.formatDate(punishment.getUnbanTimestamp()));
             } else {
                 lore.add(ChatColor.LIGHT_PURPLE + "Unbanned By: " + ChatColor.WHITE + punishment.getUnbannedByName());
-                lore.add(ChatColor.LIGHT_PURPLE + "Unban Reason: " + ChatColor.WHITE + punishment.getUnbanReason());
+                lore.add(ChatColor.LIGHT_PURPLE + "UnbanCommand Reason: " + ChatColor.WHITE + punishment.getUnbanReason());
                 lore.add(ChatColor.LIGHT_PURPLE + "Unbanned At: " + ChatColor.WHITE + DateUtil.formatDate(punishment.getUnbanTimestamp()));
             }
         } else if (!active && !punishment.getType().equalsIgnoreCase("WARN")) {
@@ -276,13 +266,11 @@ public class HistoryGUIListener implements Listener {
         Inventory gui = Bukkit.createInventory(null, 54,
                 ChatColor.DARK_PURPLE + Bukkit.getOfflinePlayer(targetUUID).getName() + "'s History" + "||" + targetUUID.toString());
 
-        // Fill the border with gray glass panes
         ItemStack border = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta borderMeta = border.getItemMeta();
         borderMeta.setDisplayName(" ");
         border.setItemMeta(borderMeta);
 
-        // Set back button
         ItemStack backButton = new ItemStack(Material.BARRIER);
         ItemMeta backMeta = backButton.getItemMeta();
         backMeta.setDisplayName(ChatColor.WHITE + "Go Back");
@@ -290,12 +278,11 @@ public class HistoryGUIListener implements Listener {
         backButton.setItemMeta(backMeta);
         gui.setItem(4, backButton);
 
-        // Fill only top and bottom rows with border
         for (int i = 0; i < 9; i++) {
-            if (i != 4) {  // Skip slot 4 for back button
-                gui.setItem(i, border);  // Top row
+            if (i != 4) {
+                gui.setItem(i, border);
             }
-            gui.setItem(i + 45, border); // Bottom row
+            gui.setItem(i + 45, border);
         }
 
         List<Punishment> activePunishments = databaseManager.getActivePunishments(targetUUID);
@@ -304,13 +291,12 @@ public class HistoryGUIListener implements Listener {
         allPunishments.addAll(activePunishments);
         allPunishments.addAll(historicalPunishments);
 
-        // Sort all punishments by timestamp in descending order
         allPunishments.sort((p1, p2) -> Long.compare(p2.getTimestamp(), p1.getTimestamp()));
 
-        int slot = 9; // Start from slot 9
+        int slot = 9;
         for (Punishment punishment : allPunishments) {
             if (punishment.getType().equalsIgnoreCase("WARN")) {
-                if (slot >= 45) break; // Prevent overflow
+                if (slot >= 45) break;
                 boolean isActive = activePunishments.contains(punishment);
                 ItemStack item = createPunishmentItem(punishment, isActive);
                 gui.setItem(slot, item);
@@ -351,9 +337,28 @@ public class HistoryGUIListener implements Listener {
                         pardonData.punishmentType
                 );
                 String targetName = Bukkit.getOfflinePlayer(pardonData.targetUUID).getName();
+                String unmutedByName = player.getName();
                 databaseManager.removePunishment(pardonData.targetUUID, pardonData.punishmentType.toLowerCase(), targetName);
                 String actionType = pardonData.punishmentType.contains("ban") ? "unbanned" : "unmuted";
-                player.sendMessage(ChatColor.GREEN + "Successfully " + actionType + " player with reason: " + reason);
+                String unmuteMessage = (MessageUtil.getColoredMessage("messages.player-unmuted",
+                        "&7(Silent) &d%player%&f has been unmuted by &d%unmuter%&f Reason: &d%reason%",
+                        "%player%", targetName,
+                        "%unmuter%", unmutedByName,
+                        "%reason%", reason));
+                String tbanMessage = (MessageUtil.getColoredMessage("messages.player-unbanned",
+                        "&7(Silent) &d%player%&f has been unbanned by &d%unbanner%&f Reason: &d%reason%",
+                        "%player%", targetName,
+                        "%unbanner%", unmutedByName,
+                        "%reason%", reason));
+                for (Player players : Bukkit.getOnlinePlayers()) {
+                    if (player.hasPermission("elitebans.command.base")) {
+                        if(actionType.contains("ban")) {
+                            players.sendMessage(tbanMessage);
+                        } else {
+                            players.sendMessage(unmuteMessage);
+                        }
+                    }
+                }
             } else {
                 LogUtil.debug("Punishment not found for " + pardonData.targetUUID);
             }

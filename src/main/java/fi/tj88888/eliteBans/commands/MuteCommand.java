@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 import static fi.tj88888.eliteBans.utils.PlayerUtils.getPlayerUUID;
 
-public class Mute implements CommandExecutor {
+public class MuteCommand implements CommandExecutor {
     private final DatabaseManager databaseManager;
-    public Mute(DatabaseManager databaseManager) {
+    public MuteCommand(DatabaseManager databaseManager) {
         this.databaseManager = databaseManager;
     }
     @Override

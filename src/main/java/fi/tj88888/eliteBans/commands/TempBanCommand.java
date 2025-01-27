@@ -10,10 +10,10 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 import static fi.tj88888.eliteBans.utils.PlayerUtils.*;
 
-public class TempBan implements CommandExecutor {
+public class TempBanCommand implements CommandExecutor {
     private final DatabaseManager databaseManager;
 
-    public TempBan(DatabaseManager databaseManager) {
+    public TempBanCommand(DatabaseManager databaseManager) {
         this.databaseManager = databaseManager;
     }
 

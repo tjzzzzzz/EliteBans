@@ -12,9 +12,9 @@ import java.util.UUID;
 import static fi.tj88888.eliteBans.utils.PlayerUtils.getPlayerDisplayName;
 import static fi.tj88888.eliteBans.utils.PlayerUtils.getPlayerUUID;
 
-public class Unban implements CommandExecutor {
+public class UnbanCommand implements CommandExecutor {
     private final DatabaseManager databaseManager;
-    public Unban(DatabaseManager databaseManager) {
+    public UnbanCommand(DatabaseManager databaseManager) {
         this.databaseManager = databaseManager;
     }
     @Override

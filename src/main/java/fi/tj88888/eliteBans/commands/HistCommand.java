@@ -11,10 +11,10 @@ import static fi.tj88888.eliteBans.utils.DateUtil.formatDate;
 import static fi.tj88888.eliteBans.utils.PlayerUtils.formatRemainingTime;
 import static fi.tj88888.eliteBans.utils.PlayerUtils.getPlayerUUID;
 
-public class Hist implements CommandExecutor {
+public class HistCommand implements CommandExecutor {
     private final DatabaseManager databaseManager;
 
-    public Hist(DatabaseManager databaseManager) {
+    public HistCommand(DatabaseManager databaseManager) {
         this.databaseManager = databaseManager;
     }
 

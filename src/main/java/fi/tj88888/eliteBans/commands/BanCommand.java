@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 import static fi.tj88888.eliteBans.utils.PlayerUtils.*;
 
-public class Ban implements CommandExecutor {
+public class BanCommand implements CommandExecutor {
     private final DatabaseManager databaseManager;
-    public Ban(DatabaseManager databaseManager) {
+    public BanCommand(DatabaseManager databaseManager) {
         this.databaseManager = databaseManager;
     }
     @Override

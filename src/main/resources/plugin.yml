@@ -8,19 +8,19 @@ authors: [ tj88888 ]
 website: https://tj88888.fi/
 commands:
   ban:
-    description: Ban a player permanently.
+    description: BanCommand a player permanently.
     usage: /<command> <player> [reason]
     permission: elitebans.command.ban
   unban:
-    description: Unban a player.
+    description: UnbanCommand a player.
     usage: /<command> <player>
     permission: elitebans.command.unban
   mute:
-    description: Mute a player.
+    description: MuteCommand a player.
     usage: /<command> <player> [reason]
     permission: elitebans.command.mute
   unmute:
-    description: Unmute a player.
+    description: UnmuteCommand a player.
     usage: /<command> <player>
     permission: elitebans.command.unmute
   tban:
@@ -36,7 +36,7 @@ commands:
     usage: /<command> <player>
     aliases: [history]
   warn:
-   description: Warn a player.
+   description: WarnCommand a player.
    usage: /<command> <player> <reason>
    permission: elitebans.command.warn
   prunehistory:
@@ -66,4 +66,7 @@ permissions:
     default: op
   elitebans.command.prunehistory:
     description: Allows a user to prune players histories.
+    default: op
+  elitebans.command.base:
+    description: Allows a user to see log messages.
     default: op

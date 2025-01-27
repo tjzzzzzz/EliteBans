@@ -12,13 +12,13 @@ import java.util.logging.Logger;
 
 import static fi.tj88888.eliteBans.utils.PlayerUtils.getPlayerUUID;
 
-public class PruneHistory implements CommandExecutor {
+public class PruneHistoryCommand implements CommandExecutor {
     private final DatabaseManager databaseManager;
     private static final String NUMBER_ERROR_MSG = ChatColor.RED + "Amount must be a number!";
     private static final String PLAYER_NOT_FOUND_MSG = ChatColor.RED + "Player not found!";
     private final Logger logger;
 
-    public PruneHistory(DatabaseManager databaseManager, Logger logger) {
+    public PruneHistoryCommand(DatabaseManager databaseManager, Logger logger) {
         this.databaseManager = databaseManager;
         this.logger = logger;
     }

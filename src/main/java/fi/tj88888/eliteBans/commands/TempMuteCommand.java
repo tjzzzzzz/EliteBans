@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 import static fi.tj88888.eliteBans.utils.PlayerUtils.*;
 
-public class TempMute implements CommandExecutor {
+public class TempMuteCommand implements CommandExecutor {
     private final DatabaseManager databaseManager;
-    public TempMute(DatabaseManager databaseManager) {
+    public TempMuteCommand(DatabaseManager databaseManager) {
         this.databaseManager = databaseManager;
     }
     @Override

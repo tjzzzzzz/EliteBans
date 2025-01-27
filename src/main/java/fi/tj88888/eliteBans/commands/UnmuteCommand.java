@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.UUID;
 import static fi.tj88888.eliteBans.utils.PlayerUtils.getPlayerUUID;
 
-public class Unmute implements CommandExecutor {
+public class UnmuteCommand implements CommandExecutor {
     private final DatabaseManager databaseManager;
-    public Unmute(DatabaseManager databaseManager) {
+    public UnmuteCommand(DatabaseManager databaseManager) {
         this.databaseManager = databaseManager;
     }
     @Override
