@@ -1,6 +1,7 @@
 package fi.tj88888.eliteBans.listeners;
 import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.models.Punishment;
+import fi.tj88888.eliteBans.utils.MessageUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -40,16 +41,20 @@ public class ChatListener implements Listener {
 
     private void handleMute(AsyncPlayerChatEvent event, Punishment punishment, boolean isTemporary) {
         event.setCancelled(true);
-        StringBuilder message = new StringBuilder(ChatColor.RED + "You are ");
-        message.append(isTemporary ? "temporarily " : "").append("muted!\n")
-                .append("Reason: ").append(ChatColor.WHITE).append(punishment.getReason());
 
         if (isTemporary) {
-            message.append("\n").append(ChatColor.RED)
-                    .append("Expires In: ").append(ChatColor.WHITE)
-                    .append(formatRemainingTime(punishment.getExpirationTime()));
+            event.getPlayer().sendMessage(MessageUtil.getColoredMessage(
+                    "messages.temp-mute-notification",
+                    "&dYou have been temporarily muted!\n&dReason: &f%reason%\n&dDuration: &f%duration%",
+                    "%reason%", punishment.getReason(),
+                    "%duration%", formatRemainingTime(punishment.getExpirationTime())
+            ));
+        } else {
+            event.getPlayer().sendMessage(MessageUtil.getColoredMessage(
+                    "messages.mute-notification",
+                    "&dYou have been muted!\n&fReason: &d%reason%",
+                    "%reason%", punishment.getReason()
+            ));
         }
-
-        event.getPlayer().sendMessage(message.toString());
     }
 }
