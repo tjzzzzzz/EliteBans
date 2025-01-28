@@ -1,7 +1,7 @@
 **EliteBans**
 ![elitebans](https://github.com/user-attachments/assets/f31e52fd-0982-48df-b914-936bc7bd0faa)
 
-
+NOTE: CURRENTLY ONLY MADE FOR 1.21 AND HIGHER, WILL BE ADDING ALL VERSION SUPPORT IN THE FUTURE.
 **Core Punishment Features** 
 
 Ban System:
