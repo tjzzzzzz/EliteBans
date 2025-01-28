@@ -659,4 +659,61 @@ public class DatabaseManager {
         return null;
     }
 
+    public int removePunishmentsByTime(long cutoffTime, String type) {
+        int removedCount = 0;
+        if (databaseType == DatabaseType.MYSQL) {
+            String activePunishmentsQuery = type.equals("all") ?
+                    "DELETE FROM punishments WHERE timestamp >= ?" :
+                    "DELETE FROM punishments WHERE timestamp >= ? AND type = ?";
+
+            String historyQuery = type.equals("all") ?
+                    "DELETE FROM punishment_history WHERE issued_at >= ?" :
+                    "DELETE FROM punishment_history WHERE issued_at >= ? AND type = ?";
+
+            try {
+                PreparedStatement activeStmt = mysqlConnection.prepareStatement(activePunishmentsQuery);
+                activeStmt.setLong(1, cutoffTime);
+                if (!type.equals("all")) {
+                    activeStmt.setString(2, type);
+                }
+                removedCount += activeStmt.executeUpdate();
+
+                PreparedStatement historyStmt = mysqlConnection.prepareStatement(historyQuery);
+                historyStmt.setLong(1, cutoffTime);
+                if (!type.equals("all")) {
+                    historyStmt.setString(2, type);
+                }
+                removedCount += historyStmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else if (databaseType == DatabaseType.MONGODB) {
+            MongoCollection<Document> activePunishments = mongoDatabase.getCollection("punishments");
+            MongoCollection<Document> punishmentHistory = mongoDatabase.getCollection("punishment_history");
+
+            if (type.equals("all")) {
+                removedCount += (int) activePunishments.deleteMany(
+                        Filters.gte("timestamp", cutoffTime)
+                ).getDeletedCount();
+                removedCount += (int) punishmentHistory.deleteMany(
+                        Filters.gte("issued_at", cutoffTime)
+                ).getDeletedCount();
+            } else {
+                removedCount += (int) activePunishments.deleteMany(
+                        Filters.and(
+                                Filters.gte("timestamp", cutoffTime),
+                                Filters.eq("type", type)
+                        )
+                ).getDeletedCount();
+                removedCount += (int) punishmentHistory.deleteMany(
+                        Filters.and(
+                                Filters.gte("issued_at", cutoffTime),
+                                Filters.eq("type", type)
+                        )
+                ).getDeletedCount();
+            }
+        }
+        return removedCount;
+    }
+
 }

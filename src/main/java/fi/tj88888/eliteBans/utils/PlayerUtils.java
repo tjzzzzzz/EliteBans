@@ -8,17 +8,21 @@ import java.util.UUID;
 
 public class PlayerUtils {
     public static UUID getPlayerUUID(String playerName) {
+
         Player onlinePlayer = Bukkit.getPlayerExact(playerName);
         if (onlinePlayer != null) {
             return onlinePlayer.getUniqueId();
         }
 
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
-        if (offlinePlayer.hasPlayedBefore()) {
-            return offlinePlayer.getUniqueId();
+        for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
+            if (offlinePlayer.getName() != null &&
+                    offlinePlayer.getName().equalsIgnoreCase(playerName)) {
+                return offlinePlayer.getUniqueId();
+            }
         }
 
-        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + playerName).getBytes(StandardCharsets.UTF_8));
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + playerName.toLowerCase())
+                .getBytes(StandardCharsets.UTF_8));
     }
 
     public static String getPlayerDisplayName(UUID playerUUID) {
@@ -28,9 +32,13 @@ public class PlayerUtils {
         }
 
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerUUID);
-        return (offlinePlayer != null && offlinePlayer.hasPlayedBefore())
-                ? offlinePlayer.getName()
-                : null;
+        if (offlinePlayer != null) {
+            if (offlinePlayer.hasPlayedBefore()) {
+                return offlinePlayer.getName();
+            }
+            return offlinePlayer.getName() != null ? offlinePlayer.getName() : "Unknown Player";
+        }
+        return "Unknown Player";
     }
 
     public static String formatDuration(long durationMillis) {
@@ -49,12 +57,6 @@ public class PlayerUtils {
             player.kickPlayer(MessageUtil.getColoredMessage("messages.ban-notification", "&dYou have been permanently banned!\\nReason: &f%reason%&d\\nAppeal At:&fdiscord.gg/example",
                     "%reason%", reason));
         }
-    }
-
-    public static void broadcastBan(String targetName, String issuerName, String reason) {
-        String message = ChatColor.RED + targetName + " has been banned by " + issuerName +
-                " for: " + ChatColor.WHITE + reason;
-        Bukkit.broadcastMessage(message);
     }
 
     public static String buildReason(String[] args, int startIndex) {

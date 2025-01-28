@@ -9,7 +9,7 @@ debug: true # True/False. Displays some database usage information.
 history:
   mode: "gui" # Possible values: "gui", "text"
 
-
+# Documentation for all color codes, https://wiki.ess3.net/mc/
 messages:
     no-permission: "You don't have permission to use this command"
     ban-usage: "Usage: /&dban &f<&dplayer&f> <&dreason&f>"

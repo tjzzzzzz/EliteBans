@@ -73,6 +73,7 @@ public final class EliteBans extends JavaPlugin {
         this.getCommand("tmute").setExecutor(new TempMuteCommand(databaseManager));
         this.getCommand("warn").setExecutor(new WarnCommand(databaseManager));
         this.getCommand("prunehistory").setExecutor(new PruneHistoryCommand(databaseManager, getLogger()));
+        this.getCommand("rollbackpunishments").setExecutor(new RollbackPunishmentsCommand(databaseManager));
         String historyMode = getConfig().getString("history.mode", "both");
 
         if (historyMode.equalsIgnoreCase("gui")) {

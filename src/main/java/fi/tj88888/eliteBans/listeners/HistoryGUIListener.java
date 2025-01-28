@@ -227,11 +227,11 @@ public class HistoryGUIListener implements Listener {
         if (punishment.getUnbannedByName() != null && !punishment.getType().equalsIgnoreCase("WARN")) {
             if (punishment.getType().equalsIgnoreCase("MUTE") || punishment.getType().equalsIgnoreCase("TMUTE")) {
                 lore.add(ChatColor.LIGHT_PURPLE + "Unmuted By: " + ChatColor.WHITE + punishment.getUnbannedByName());
-                lore.add(ChatColor.LIGHT_PURPLE + "UnmuteCommand Reason: " + ChatColor.WHITE + punishment.getUnbanReason());
+                lore.add(ChatColor.LIGHT_PURPLE + "Unmute Reason: " + ChatColor.WHITE + punishment.getUnbanReason());
                 lore.add(ChatColor.LIGHT_PURPLE + "Unmuted At: " + ChatColor.WHITE + DateUtil.formatDate(punishment.getUnbanTimestamp()));
             } else {
                 lore.add(ChatColor.LIGHT_PURPLE + "Unbanned By: " + ChatColor.WHITE + punishment.getUnbannedByName());
-                lore.add(ChatColor.LIGHT_PURPLE + "UnbanCommand Reason: " + ChatColor.WHITE + punishment.getUnbanReason());
+                lore.add(ChatColor.LIGHT_PURPLE + "Unban Reason: " + ChatColor.WHITE + punishment.getUnbanReason());
                 lore.add(ChatColor.LIGHT_PURPLE + "Unbanned At: " + ChatColor.WHITE + DateUtil.formatDate(punishment.getUnbanTimestamp()));
             }
         } else if (!active && !punishment.getType().equalsIgnoreCase("WARN")) {
@@ -338,16 +338,17 @@ public class HistoryGUIListener implements Listener {
                 );
                 String targetName = Bukkit.getOfflinePlayer(pardonData.targetUUID).getName();
                 String unmutedByName = player.getName();
+                String targetDisplayName = (targetName != null) ? targetName : "Unknown";
                 databaseManager.removePunishment(pardonData.targetUUID, pardonData.punishmentType.toLowerCase(), targetName);
                 String actionType = pardonData.punishmentType.contains("ban") ? "unbanned" : "unmuted";
                 String unmuteMessage = (MessageUtil.getColoredMessage("messages.player-unmuted",
                         "&7(Silent) &d%player%&f has been unmuted by &d%unmuter%&f Reason: &d%reason%",
-                        "%player%", targetName,
+                        "%player%", targetDisplayName,
                         "%unmuter%", unmutedByName,
                         "%reason%", reason));
                 String tbanMessage = (MessageUtil.getColoredMessage("messages.player-unbanned",
                         "&7(Silent) &d%player%&f has been unbanned by &d%unbanner%&f Reason: &d%reason%",
-                        "%player%", targetName,
+                        "%player%", targetDisplayName,
                         "%unbanner%", unmutedByName,
                         "%reason%", reason));
                 for (Player players : Bukkit.getOnlinePlayers()) {
