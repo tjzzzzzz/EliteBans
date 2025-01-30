@@ -20,7 +20,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
-import static fi.tj88888.eliteBans.utils.PlayerUtils.formatRemainingTime;
+import static fi.tj88888.eliteBans.utils.PlayerUtil.formatRemainingTime;
 
 public class HistoryGUIListener implements Listener {
     private final DatabaseManager databaseManager;

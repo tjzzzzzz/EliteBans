@@ -1,5 +1,5 @@
 name: EliteBans
-version: '1.0.5'
+version: '1.1.0'
 main: fi.tj88888.eliteBans.EliteBans
 api-version: '1.21'
 prefix: elitebans

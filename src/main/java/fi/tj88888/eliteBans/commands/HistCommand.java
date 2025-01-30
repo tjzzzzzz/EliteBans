@@ -8,8 +8,8 @@ import org.bukkit.command.CommandSender;
 import java.util.List;
 import java.util.UUID;
 import static fi.tj88888.eliteBans.utils.DateUtil.formatDate;
-import static fi.tj88888.eliteBans.utils.PlayerUtils.formatRemainingTime;
-import static fi.tj88888.eliteBans.utils.PlayerUtils.getPlayerUUID;
+import static fi.tj88888.eliteBans.utils.PlayerUtil.formatRemainingTime;
+import static fi.tj88888.eliteBans.utils.PlayerUtil.getPlayerUUID;
 
 public class HistCommand implements CommandExecutor {
     private final DatabaseManager databaseManager;

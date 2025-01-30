@@ -5,6 +5,18 @@ database:
   username: ""
   password: ""
 
+discord-logging: false # True/False. Logs command usage via discord webhooks.
+webhooks:
+  ban: ""
+  mute: ""
+  warn: ""
+  unban: ""
+  unmute: ""
+  tban: ""
+  tmute: ""
+  prunehistory: ""
+  rollbackpunishments: ""
+
 debug: true # True/False. Displays some database usage information.
 history:
   mode: "gui" # Possible values: "gui", "text"

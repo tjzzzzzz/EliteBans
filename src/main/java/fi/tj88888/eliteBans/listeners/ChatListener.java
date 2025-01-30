@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import java.util.UUID;
-import static fi.tj88888.eliteBans.utils.PlayerUtils.formatRemainingTime;
+import static fi.tj88888.eliteBans.utils.PlayerUtil.formatRemainingTime;
 
 public class ChatListener implements Listener {
     private final DatabaseManager databaseManager;

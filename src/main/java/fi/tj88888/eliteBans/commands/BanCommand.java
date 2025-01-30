@@ -1,19 +1,23 @@
 package fi.tj88888.eliteBans.commands;
+import fi.tj88888.eliteBans.EliteBans;
 import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.models.Punishment;
 import fi.tj88888.eliteBans.utils.MessageUtil;
+import fi.tj88888.eliteBans.utils.WebhookUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import java.util.UUID;
-import static fi.tj88888.eliteBans.utils.PlayerUtils.*;
+import static fi.tj88888.eliteBans.utils.PlayerUtil.*;
 
 public class BanCommand implements CommandExecutor {
     private final DatabaseManager databaseManager;
-    public BanCommand(DatabaseManager databaseManager) {
+    private static EliteBans plugin;
+    public BanCommand(DatabaseManager databaseManager, EliteBans instance) {
         this.databaseManager = databaseManager;
+        plugin = instance;
     }
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -48,6 +52,22 @@ public class BanCommand implements CommandExecutor {
                 "%player%", targetName,
                 "%banner%", issuerName,
                 "%reason%", reason));
+
+        String webhookUrl = plugin.getConfig().getString("webhooks.ban");
+        boolean discordLogging = plugin.getConfig().getBoolean("discord-logging", false);
+
+        if(discordLogging && webhookUrl != null) {
+                WebhookUtil.logCommand(
+                        "Ban",
+                        issuerName,
+                        targetName,
+                        reason,
+                        webhookUrl
+                );
+
+        }
+
+
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player.hasPermission("elitebans.command.base")) {
                 player.sendMessage(banMessage);

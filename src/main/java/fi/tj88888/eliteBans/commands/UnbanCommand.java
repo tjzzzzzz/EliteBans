@@ -1,7 +1,9 @@
 package fi.tj88888.eliteBans.commands;
+import fi.tj88888.eliteBans.EliteBans;
 import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.models.Punishment;
 import fi.tj88888.eliteBans.utils.MessageUtil;
+import fi.tj88888.eliteBans.utils.WebhookUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,13 +11,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.UUID;
-import static fi.tj88888.eliteBans.utils.PlayerUtils.getPlayerDisplayName;
-import static fi.tj88888.eliteBans.utils.PlayerUtils.getPlayerUUID;
+import static fi.tj88888.eliteBans.utils.PlayerUtil.getPlayerDisplayName;
+import static fi.tj88888.eliteBans.utils.PlayerUtil.getPlayerUUID;
 
 public class UnbanCommand implements CommandExecutor {
     private final DatabaseManager databaseManager;
-    public UnbanCommand(DatabaseManager databaseManager) {
+    private static EliteBans plugin;
+    public UnbanCommand(DatabaseManager databaseManager, EliteBans instance) {
         this.databaseManager = databaseManager;
+        this.plugin = instance;
     }
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -68,6 +72,18 @@ public class UnbanCommand implements CommandExecutor {
             }
         }
         if (foundBan) {
+            String webhookUrl = plugin.getConfig().getString("webhooks.unban");
+            boolean discordLogging = plugin.getConfig().getBoolean("discord-logging", false);
+            if (discordLogging && webhookUrl != null) {
+                WebhookUtil.logCommand(
+                        "Unban",
+                        unbannedByName,
+                        targetDisplayName,
+                        reason,
+                        webhookUrl
+                );
+            }
+
             String tbanMessage = (MessageUtil.getColoredMessage("messages.player-unbanned",
                     "&7(Silent) &d%player%&f has been unbanned by &d%unbanner%&f Reason: &d%reason%",
                     "%player%", targetDisplayName,

@@ -4,14 +4,13 @@ import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.models.Punishment;
 import fi.tj88888.eliteBans.utils.LogUtil;
 import fi.tj88888.eliteBans.utils.MessageUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.util.List;
 import java.util.UUID;
-import static fi.tj88888.eliteBans.utils.PlayerUtils.formatRemainingTime;
+import static fi.tj88888.eliteBans.utils.PlayerUtil.formatRemainingTime;
 
 public class BanListener implements Listener {
     private final DatabaseManager databaseManager;

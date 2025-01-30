@@ -15,7 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 import java.util.UUID;
 
-import static fi.tj88888.eliteBans.utils.PlayerUtils.getPlayerUUID;
+import static fi.tj88888.eliteBans.utils.PlayerUtil.getPlayerUUID;
 
 public class HistGUICommand implements CommandExecutor {
     private final DatabaseManager databaseManager;

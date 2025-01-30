@@ -15,10 +15,12 @@ import java.util.logging.Level;
 public final class EliteBans extends JavaPlugin {
     private DatabaseManager databaseManager;
     private boolean debug;
+    private static EliteBans instance;
 
     @Override
     public void onEnable() {
         try {
+            instance = this;
             LogUtil.init(this);
             MessageUtil.init(this);
             this.saveDefaultConfig();
@@ -44,6 +46,8 @@ public final class EliteBans extends JavaPlugin {
                     password
             );
 
+
+
             Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
                 try {
                     databaseManager.open(connectionString, databaseName, username, password);
@@ -65,15 +69,15 @@ public final class EliteBans extends JavaPlugin {
     }
 
     private void registerCommands() {
-        this.getCommand("ban").setExecutor(new BanCommand(databaseManager));
-        this.getCommand("unban").setExecutor(new UnbanCommand(databaseManager));
-        this.getCommand("tban").setExecutor(new TempBanCommand(databaseManager));
-        this.getCommand("mute").setExecutor(new MuteCommand(databaseManager));
-        this.getCommand("unmute").setExecutor(new UnmuteCommand(databaseManager));
-        this.getCommand("tmute").setExecutor(new TempMuteCommand(databaseManager));
-        this.getCommand("warn").setExecutor(new WarnCommand(databaseManager));
-        this.getCommand("prunehistory").setExecutor(new PruneHistoryCommand(databaseManager, getLogger()));
-        this.getCommand("rollbackpunishments").setExecutor(new RollbackPunishmentsCommand(databaseManager));
+        this.getCommand("ban").setExecutor(new BanCommand(databaseManager, this));
+        this.getCommand("unban").setExecutor(new UnbanCommand(databaseManager, this));
+        this.getCommand("tban").setExecutor(new TempBanCommand(databaseManager, this));
+        this.getCommand("mute").setExecutor(new MuteCommand(databaseManager, this));
+        this.getCommand("unmute").setExecutor(new UnmuteCommand(databaseManager, this));
+        this.getCommand("tmute").setExecutor(new TempMuteCommand(databaseManager, this));
+        this.getCommand("warn").setExecutor(new WarnCommand(databaseManager, this));
+        this.getCommand("prunehistory").setExecutor(new PruneHistoryCommand(databaseManager, getLogger(), this));
+        this.getCommand("rollbackpunishments").setExecutor(new RollbackPunishmentsCommand(databaseManager, this));
         String historyMode = getConfig().getString("history.mode", "both");
 
         if (historyMode.equalsIgnoreCase("gui")) {
@@ -115,5 +119,9 @@ public final class EliteBans extends JavaPlugin {
 
     public boolean isDebugEnabled() {
         return debug;
+    }
+
+    public static EliteBans getInstance() {
+        return instance;
     }
 }

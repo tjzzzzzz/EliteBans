@@ -1,21 +1,25 @@
 package fi.tj88888.eliteBans.commands;
 
+import fi.tj88888.eliteBans.EliteBans;
 import fi.tj88888.eliteBans.database.DatabaseManager;
 import fi.tj88888.eliteBans.models.Punishment;
 import fi.tj88888.eliteBans.utils.MessageUtil;
+import fi.tj88888.eliteBans.utils.WebhookUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import java.util.UUID;
-import static fi.tj88888.eliteBans.utils.PlayerUtils.getPlayerUUID;
+import static fi.tj88888.eliteBans.utils.PlayerUtil.getPlayerUUID;
 
 public class WarnCommand implements CommandExecutor {
     private final DatabaseManager databaseManager;
+    private static EliteBans plugin;
 
-    public WarnCommand(DatabaseManager databaseManager) {
+    public WarnCommand(DatabaseManager databaseManager, EliteBans instance) {
         this.databaseManager = databaseManager;
+        this.plugin = instance;
     }
 
     @Override
@@ -71,6 +75,17 @@ public class WarnCommand implements CommandExecutor {
         );
         String punishmentType = "warn";
         databaseManager.removePunishment(targetUUID, punishmentType, targetName);
+        String webhookUrl = plugin.getConfig().getString("webhooks.warn");
+        boolean discordLogging = plugin.getConfig().getBoolean("discord-logging", false);
+        if (discordLogging && webhookUrl != null) {
+            WebhookUtil.logCommand(
+                    "Warn",
+                    issuerName,
+                    targetName,
+                    reason,
+                    webhookUrl
+            );
+        }
         String tmuteMessage = (MessageUtil.getColoredMessage("messages.player-warned",
                 "&7(Silent) &d%player%&f has been warned by &d%warner%&f Reason: &d%reason%",
                 "%player%", targetName,
