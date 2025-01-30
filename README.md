@@ -77,12 +77,13 @@ Configurable database settings
 GUI:
 Unmuting/Unbanning straight from the gui, by right clicking an active punishment.
 
-Rollbackpunishments
+Rollbackpunishments:
 Types: tmute,mute,ban,tban,warn or all.
 Example: /rollbackpunishments 1d all
 Note: Rollbackpunishments removes all active and historical punishments within a set time period.
 
-
+Discord Logging:
+Intergration for discord webhook logging for commands check config.yml.
 
 
 Showcase: 
