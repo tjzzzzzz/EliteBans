@@ -1,5 +1,5 @@
 EliteBans
-
+![elitebans](https://github.com/user-attachments/assets/f31e52fd-0982-48df-b914-936bc7bd0faa)
 A powerful and customizable punishment system for Minecraft servers.
 
 	⚠️ NOTE: Currently supports Minecraft 1.21+. Older version support will be added in the future.
@@ -68,14 +68,14 @@ Features
 
 📸 Showcase
 
-https://github.com/user-attachments/assets/1abdb890-b9de-4e19-9d8e-ca7c47409897
-https://github.com/user-attachments/assets/18091e45-c647-41cb-b509-0472aa9e31ba
-https://github.com/user-attachments/assets/845d6a5a-7ba9-4390-8f00-5da59719096c
-https://github.com/user-attachments/assets/5d67bc0e-a431-484f-910f-d29662c6249d
-https://github.com/user-attachments/assets/87cebb77-505c-4b17-b5a3-28944f4a1b80
-https://github.com/user-attachments/assets/72ec68c7-604f-4ed4-9e7a-91b04f6bfab3
-https://github.com/user-attachments/assets/acf181fb-e378-4232-80b2-1d959acd4d17
-https://github.com/user-attachments/assets/ac3f6219-7c7f-4b89-a292-6eb2cd0ed9a2
+![image](https://github.com/user-attachments/assets/1abdb890-b9de-4e19-9d8e-ca7c47409897)
+![image](https://github.com/user-attachments/assets/18091e45-c647-41cb-b509-0472aa9e31ba)
+![image](https://github.com/user-attachments/assets/845d6a5a-7ba9-4390-8f00-5da59719096c)
+![image](https://github.com/user-attachments/assets/5d67bc0e-a431-484f-910f-d29662c6249d)
+![image](https://github.com/user-attachments/assets/87cebb77-505c-4b17-b5a3-28944f4a1b80)
+![image](https://github.com/user-attachments/assets/72ec68c7-604f-4ed4-9e7a-91b04f6bfab3)
+![image](https://github.com/user-attachments/assets/acf181fb-e378-4232-80b2-1d959acd4d17)
+![image](https://github.com/user-attachments/assets/ac3f6219-7c7f-4b89-a292-6eb2cd0ed9a2)
 
 🚀 Future Plans
 	•	Support for older Minecraft versions
