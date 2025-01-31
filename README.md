@@ -78,8 +78,3 @@ Features
 ![image](https://github.com/user-attachments/assets/72ec68c7-604f-4ed4-9e7a-91b04f6bfab3)
 ![image](https://github.com/user-attachments/assets/acf181fb-e378-4232-80b2-1d959acd4d17)
 ![image](https://github.com/user-attachments/assets/ac3f6219-7c7f-4b89-a292-6eb2cd0ed9a2)
-
-🚀 Future Plans
-	•	Support for older Minecraft versions
-	•	More punishment customization options
-	•	Advanced reporting and analytics
