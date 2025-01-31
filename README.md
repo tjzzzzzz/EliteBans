@@ -4,7 +4,7 @@
 
 A powerful and customizable punishment system for Minecraft servers.
 
-	⚠️ NOTE: Currently supports Minecraft 1.21+. Older version support will be added in the future.
+	⚠️ NOTE: I've done a little bit of testing on versions from 1.13-1.21.4 with little to no bugs. Should work on versions from 1.13-1.21.4. If there is any issues feel free to contact me.
 
 Features
 
