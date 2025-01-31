@@ -1,5 +1,6 @@
 EliteBans
 ![elitebans](https://github.com/user-attachments/assets/f31e52fd-0982-48df-b914-936bc7bd0faa)
+
 A powerful and customizable punishment system for Minecraft servers.
 
 	⚠️ NOTE: Currently supports Minecraft 1.21+. Older version support will be added in the future.
