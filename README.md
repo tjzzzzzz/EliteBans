@@ -1,14 +1,8 @@
 **EliteBans**
 
-![elitebans](https://github.com/user-attachments/assets/f31e52fd-0982-48df-b914-936bc7bd0faa)
-
-A powerful and customizable punishment system for Minecraft servers.
-
-	⚠️ NOTE: I've done a little bit of testing on versions from 1.13-1.21.4 with little to no bugs. Should work on versions from 1.13-1.21.4. If there is any issues feel free to contact me.
-
 Features
 
-🔨 Core Punishment System
+Core Punishment System
 	•	Ban System
 	•	Permanent bans: /ban <player> <reason>
 	•	Temporary bans: /tban <player> <time> <reason> (e.g., 30m, 2h, 1d)
@@ -21,7 +15,7 @@ Features
 	•	Issue warnings: /warn <player> <reason>
 	•	Stores all warnings in player history
 
-📜 Punishment History Management
+Punishment History Management
 	•	View history in two ways:
 	•	GUI-based: /histgui (interactive menu)
 	•	Text-based: /hist
@@ -30,18 +24,16 @@ Features
 	•	Duration, expiration time
 	•	Unban/unmute details
 
-⚖️ Punishment Management
+Punishment Management
 	•	Unban players: /unban <player> <reason>
 	•	Unmute players: /unmute <player> <reason>
 	•	Prune history: /prunehistory <player> <amount>
 	•	Silent punishments (staff-only notifications)
 
-🗄️ Dual Database Support
+Dual Database Support
 	•	MongoDB & MySQL support
-	•	Automatic table/collection creation
-	•	Efficient data management
 
-🛠 Technical Features
+Technical Features
 	•	Automatic Expiration:
 	•	Background task removes expired punishments
 	•	Expired punishments are archived automatically
@@ -53,7 +45,7 @@ Features
 	•	Fully compatible with UUID-based player identification
 	•	Offline player support with name-based fallback
 
-💡 Quality of Life Improvements
+Quality of Life Improvements
 	•	Debug Mode:
 	•	Configurable debug logging for detailed error tracking
 	•	Customization:
@@ -68,7 +60,7 @@ Features
 	•	Discord Logging:
 	•	Webhook integration for punishment logs (configure in config.yml)
 
-📸 Showcase
+Pics
 
 ![image](https://github.com/user-attachments/assets/1abdb890-b9de-4e19-9d8e-ca7c47409897)
 ![image](https://github.com/user-attachments/assets/18091e45-c647-41cb-b509-0472aa9e31ba)
